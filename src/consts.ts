@@ -5,8 +5,8 @@ export const SITE = {
   authorZh: '江鑫宇',
 
   // 题记（替代原先的生硬 tagline，斜体展示）
-  epigraph: 'All the waters of the world will meet again.',
-  epigraphZh: '世间万川，终会重逢。',
+  epigraph: 'Do not go gentle into that good night.',
+  epigraphZh: '不要温和地走进那个良夜。',
 
   // 身份副标题（hero 名字下方一行）
   identityEn: 'Robotics & Embodied AI · Photographer · Drummer of 巧克力文件岛',
