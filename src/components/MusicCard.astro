@@ -1,0 +1,60 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  item: CollectionEntry<'music'>;
+}
+const { item } = Astro.props;
+const { title, artist, embed, note } = item.data;
+
+// 把常见的分享链接转成可嵌入的 iframe 地址
+function toEmbed(u: string): string {
+  try {
+    const url = new URL(u);
+    if (url.hostname.includes('youtube.com') && url.searchParams.get('v')) {
+      return `https://www.youtube.com/embed/${url.searchParams.get('v')}`;
+    }
+    if (url.hostname === 'youtu.be') {
+      return `https://www.youtube.com/embed${url.pathname}`;
+    }
+    if (url.hostname.includes('spotify.com')) {
+      return `https://open.spotify.com/embed${url.pathname}`;
+    }
+  } catch {
+    /* ignore */
+  }
+  return u;
+}
+const src = toEmbed(embed);
+---
+
+<article class="card music-card">
+  <h3>{title}</h3>
+  {artist && <p class="meta">{artist}</p>}
+  <div class="embed">
+    <iframe
+      src={src}
+      title={title}
+      loading="lazy"
+      allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+      allowfullscreen
+    ></iframe>
+  </div>
+  {note && <p class="note">{note}</p>}
+</article>
+
+<style>
+  .music-card { display: flex; flex-direction: column; }
+  .music-card h3 { margin: 0 0 0.2em; }
+  .meta { color: var(--text-muted); font-size: 0.9rem; margin: 0 0 0.8em; }
+  .embed {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--bg);
+  }
+  .embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .note { margin-top: 0.8em; color: var(--text-muted); font-size: 0.95rem; }
+</style>

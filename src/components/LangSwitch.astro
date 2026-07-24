@@ -1,0 +1,33 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { stripLocale } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const other: Lang = lang === 'en' ? 'zh' : 'en';
+const label = other === 'zh' ? '中文' : 'EN';
+// 去掉当前语言前缀，拼到另一语言，实现「切换语言停留在当前页」
+const pathWithoutLocale = stripLocale(Astro.url.pathname);
+const target = getRelativeLocaleUrl(other, pathWithoutLocale);
+---
+
+<a class="lang-switch" href={target} hreflang={other} aria-label={`Switch to ${label}`}>
+  {label}
+</a>
+
+<style>
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.4em 0.8em;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .lang-switch:hover { background: var(--accent-soft); border-color: var(--accent); text-decoration: none; }
+</style>

@@ -1,0 +1,52 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import { useTranslations } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  title: string;
+  lang: Lang;
+  pubDate: Date;
+  updatedDate?: Date;
+  tags?: string[];
+  description?: string;
+}
+
+const { title, lang, pubDate, updatedDate, tags = [], description } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={`${title} · Your Name`} description={description} lang={lang}>
+  <article class="post">
+    <header class="post-head">
+      <h1>{title}</h1>
+      <p class="post-meta">
+        <FormattedDate date={pubDate} lang={lang} />
+        {updatedDate && <> · {t.updated} <FormattedDate date={updatedDate} lang={lang} /></>}
+      </p>
+      {tags.length > 0 && (
+        <p class="post-tags">
+          {tags.map((tag) => <span class="tag">#{tag}</span>)}
+        </p>
+      )}
+    </header>
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post-head {
+    padding: 3rem 0 1.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2rem;
+  }
+  .post-meta {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin: 0.4em 0;
+  }
+  .post-tags { margin-top: 0.6em; }
+</style>

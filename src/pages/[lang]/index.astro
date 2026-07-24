@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NoteCard from '../../components/NoteCard.astro';
+import { getCollection } from 'astro:content';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { SITE } from '../../consts';
+import { useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+export const getStaticPaths = () => [
+  { params: { lang: 'en' } },
+  { params: { lang: 'zh' } },
+];
+
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+const tagline = lang === 'zh' ? SITE.taglineZh : SITE.taglineEn;
+
+// 最新日志（当前语言，最多 3 篇）
+const notes = (await getCollection('notes'))
+  .filter((n) => n.id.startsWith(lang + '/') && !n.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+// 封面摄影作品（最多 4 张）
+const covers = (await getCollection('photography'))
+  .filter((p) => p.id.startsWith(lang + '/') && p.data.cover)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 4);
+
+const sections = [
+  { key: 'research', path: 'research', desc: lang === 'zh' ? '机器人、具身智能与机器学习项目' : 'Robotics, embodied AI & ML projects' },
+  { key: 'photography', path: 'photography', desc: lang === 'zh' ? '旅行与街头摄影' : 'Travel & street photography' },
+  { key: 'music', path: 'music', desc: lang === 'zh' ? '演奏与歌单' : 'Performances & playlists' },
+] as const;
+---
+
+<BaseLayout title={`${SITE.author} · ${tagline}`} description={tagline} lang={lang}>
+  <section class="hero">
+    <p class="eyebrow">{lang === 'zh' ? '你好，我是' : 'Hi, I’m'}</p>
+    <h1>{SITE.author}</h1>
+    <p class="lead">{tagline}</p>
+    <p class="cta">
+      <a class="btn" href={getRelativeLocaleUrl(lang, 'about')}>{t.nav.about} →</a>
+      <a class="btn secondary" href={getRelativeLocaleUrl(lang, 'cv')}>{t.cvTitle}</a>
+    </p>
+  </section>
+
+  <section class="features">
+    <div class="grid">
+      {sections.map((s) => (
+        <a class="card feature" href={getRelativeLocaleUrl(lang, s.path)}>
+          <h3>{t.nav[s.key]}</h3>
+          <p class="meta">{s.desc}</p>
+          <span class="arrow">→</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  {covers.length > 0 && (
+    <section class="home-photos">
+      <h2>{t.photographyTitle}</h2>
+      <div class="strip">
+        {covers.map((c) => (
+          <a href={getRelativeLocaleUrl(lang, 'photography')}>
+            <img src={c.data.image} alt={c.data.title} loading="lazy" />
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {notes.length > 0 && (
+    <section class="home-notes">
+      <h2>{t.notesTitle}</h2>
+      <div class="grid">
+        {notes.map((n) => <NoteCard post={n} lang={lang} />)}
+      </div>
+      <p style="margin-top:1.5rem">
+        <a class="btn secondary" href={getRelativeLocaleUrl(lang, 'notes')}>{t.viewAll} →</a>
+      </p>
+    </section>
+  )}
+</BaseLayout>
+
+<style>
+  .cta { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.6rem; }
+  .feature { position: relative; }
+  .feature .arrow { position: absolute; right: 1.4rem; bottom: 1.2rem; color: var(--accent); font-size: 1.3rem; }
+  .feature:hover .arrow { transform: translateX(4px); }
+  .home-photos, .home-notes { margin-top: 3.5rem; }
+  .strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.6rem;
+  }
+  .strip img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    transition: transform 0.3s ease;
+  }
+  .strip a:hover img { transform: scale(1.03); }
+</style>

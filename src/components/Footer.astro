@@ -1,0 +1,48 @@
+---
+import { SITE } from '../consts';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const year = new Date().getFullYear();
+const links = [
+  { label: 'GitHub', href: SITE.social.github },
+  { label: 'LinkedIn', href: SITE.social.linkedin },
+  { label: 'Scholar', href: SITE.social.scholar },
+  { label: 'Email', href: `mailto:${SITE.email}` },
+];
+---
+
+<footer class="site-footer">
+  <div class="container foot">
+    <p>© {year} {SITE.author}. {lang === 'zh' ? '保留所有权利。' : 'All rights reserved.'}</p>
+    <ul class="social">
+      {links.map((l) => (
+        <li><a href={l.href} rel="me noopener" target="_blank">{l.label}</a></li>
+      ))}
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .social {
+    list-style: none;
+    display: flex;
+    gap: 1.1rem;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+  .social a { color: var(--text-muted); font-size: 0.9rem; }
+  .social a:hover { color: var(--accent); }
+</style>

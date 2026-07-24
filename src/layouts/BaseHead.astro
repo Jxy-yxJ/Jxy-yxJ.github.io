@@ -1,0 +1,44 @@
+---
+import '../styles/global.css';
+import { SITE } from '../consts';
+
+interface Props {
+  title: string;
+  description?: string;
+  lang?: string;
+  image?: string;
+}
+
+const { title, description = SITE.taglineEn, lang = 'en', image } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url);
+const ogImage = image ? new URL(image, Astro.site ?? Astro.url) : undefined;
+---
+
+<!-- 防闪（FOUC）：首屏前先应用 localStorage 里的主题 -->
+<script is:inline>
+  const t =
+    localStorage.getItem('theme') ||
+    (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.dataset.theme = t;
+</script>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="generator" content={Astro.generator} />
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+{ogImage && <meta property="og:image" content={ogImage} />}
+<meta name="twitter:card" content="summary_large_image" />
+
+<!-- 各语言备用链接 -->
+<link rel="alternate" hreflang="en" href={`/${'en'}${Astro.url.pathname.replace(/^\/(en|zh)(?=\/|$)/, '') || '/'}`} />
+<link rel="alternate" hreflang="zh" href={`/${'zh'}${Astro.url.pathname.replace(/^\/(en|zh)(?=\/|$)/, '') || '/'}`} />

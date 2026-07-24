@@ -1,0 +1,72 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { useTranslations } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  immersive?: boolean;
+}
+const { lang, immersive = false } = Astro.props;
+const t = useTranslations(lang);
+
+// 导航项：key 对应 ui 文案，value 为相对当前语言的路径
+const items: { key: keyof typeof t.nav; path: string }[] = [
+  { key: 'about', path: 'about' },
+  { key: 'research', path: 'research' },
+  { key: 'notes', path: 'notes' },
+  { key: 'photography', path: 'photography' },
+  { key: 'music', path: 'music' },
+  { key: 'cv', path: 'cv' },
+  { key: 'contact', path: 'contact' },
+];
+
+const current = Astro.url.pathname.replace(/\/$/, '');
+function isActive(path: string) {
+  const full = getRelativeLocaleUrl(lang, path).replace(/\/$/, '');
+  return current === full || current.startsWith(full + '/');
+}
+---
+
+<nav class="site-nav" aria-label="Primary">
+  <ul>
+    {items.map((item) => (
+      <li>
+        <a
+          href={getRelativeLocaleUrl(lang, item.path)}
+          aria-current={isActive(item.path) ? 'page' : undefined}
+          class:list={[{ active: isActive(item.path) }]}
+        >
+          {t.nav[item.key]}
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .site-nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 1.1rem;
+    margin: 0;
+    padding: 0;
+  }
+  .site-nav a {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 0.3em 0;
+    border-bottom: 2px solid transparent;
+  }
+  .site-nav a:hover { color: var(--text); text-decoration: none; }
+  .site-nav a.active {
+    color: var(--accent-strong);
+    border-bottom-color: var(--accent);
+  }
+  /* 摄影页沉浸：导航文字更亮 */
+  :global(body.immersive) .site-nav a { color: rgba(236, 229, 219, 0.7); }
+  :global(body.immersive) .site-nav a:hover,
+  :global(body.immersive) .site-nav a.active { color: #fff; }
+</style>

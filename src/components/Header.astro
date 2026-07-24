@@ -1,0 +1,67 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import Nav from './Nav.astro';
+import LangSwitch from './LangSwitch.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import { SITE } from '../consts';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  immersive?: boolean;
+}
+const { lang, immersive = false } = Astro.props;
+const home = getRelativeLocaleUrl(lang, '/');
+---
+
+<header class="site-header">
+  <div class="container bar">
+    <a class="brand" href={home}>{SITE.author}</a>
+    <Nav lang={lang} immersive={immersive} />
+    <div class="actions">
+      <LangSwitch lang={lang} />
+      <ThemeToggle lang={lang} />
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: saturate(140%) blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-block: 0.7rem;
+  }
+  .brand {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 1.15rem;
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .brand:hover { color: var(--accent); text-decoration: none; }
+  .site-nav { flex: 1; }
+  .actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  @media (max-width: 760px) {
+    .bar { flex-wrap: wrap; gap: 0.6rem 1rem; }
+    .site-nav { order: 3; flex-basis: 100%; }
+  }
+  /* 摄影页沉浸：头部背景更暗 */
+  :global(body.immersive) .site-header {
+    background: color-mix(in srgb, #0e0c09 80%, transparent);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+  :global(body.immersive) .brand { color: #fff; }
+</style>

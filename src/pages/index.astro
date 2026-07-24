@@ -1,0 +1,19 @@
+---
+// 静态站无服务端重定向，用客户端脚本按浏览器语言跳到 /en/ 或 /zh/
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content="0;url=/en/" />
+    <title>Redirecting…</title>
+  </head>
+  <body>
+    <p>Redirecting to <a href="/en/">/en/</a>…</p>
+    <script is:inline>
+      const l = (navigator.language || 'en').toLowerCase().startsWith('zh') ? '/zh/' : '/en/';
+      location.replace(l);
+    </script>
+  </body>
+</html>

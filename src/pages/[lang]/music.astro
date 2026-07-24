@@ -1,0 +1,33 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import MusicCard from '../../components/MusicCard.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+export const getStaticPaths = () => [
+  { params: { lang: 'en' } },
+  { params: { lang: 'zh' } },
+];
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+
+const items = (await getCollection('music'))
+  .filter((m) => m.id.startsWith(lang + '/'))
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<PageLayout
+  title={t.musicTitle}
+  lang={lang}
+  intro={lang === 'zh' ? '演奏、创作与歌单。' : 'Performances, compositions, and playlists.'}
+>
+  <div class="grid">
+    {items.map((m) => <MusicCard item={m} />)}
+  </div>
+  {items.length === 0 && (
+    <p style="color:var(--text-muted)">
+      {lang === 'zh' ? '内容待补充——在后台 CMS 添加 Spotify / YouTube 嵌入链接。' : 'Content coming soon — add Spotify / YouTube embeds via the CMS.'}
+    </p>
+  )}
+</PageLayout>

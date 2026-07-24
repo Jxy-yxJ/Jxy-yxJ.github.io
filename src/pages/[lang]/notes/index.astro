@@ -1,0 +1,33 @@
+---
+import PageLayout from '../../../layouts/PageLayout.astro';
+import NoteCard from '../../../components/NoteCard.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations } from '../../../i18n/utils';
+import type { Lang } from '../../../i18n/ui';
+
+export const getStaticPaths = () => [
+  { params: { lang: 'en' } },
+  { params: { lang: 'zh' } },
+];
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+
+const notes = (await getCollection('notes'))
+  .filter((n) => n.id.startsWith(lang + '/') && !n.data.draft)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<PageLayout
+  title={t.notesTitle}
+  lang={lang}
+  intro={lang === 'zh' ? '科研与学习的进展记录。' : 'A running log of research and learning progress.'}
+>
+  <div class="grid">
+    {notes.map((n) => <NoteCard post={n} lang={lang} />)}
+  </div>
+  {notes.length === 0 && (
+    <p style="color:var(--text-muted)">
+      {lang === 'zh' ? '还没有日志——在后台 CMS 写第一篇吧。' : 'No notes yet — write your first one in the CMS.'}
+    </p>
+  )}
+</PageLayout>

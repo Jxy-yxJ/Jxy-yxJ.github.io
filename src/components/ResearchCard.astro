@@ -1,0 +1,38 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  item: CollectionEntry<'research'>;
+}
+const { item } = Astro.props;
+const { title, role, period, summary, tags, links, cover } = item.data;
+---
+
+<article class="card research-card">
+  {cover && <img class="cover" src={cover} alt={title} loading="lazy" width="640" height="360" />}
+  <div class="body">
+    <p class="meta">{role} · {period}</p>
+    <h3>{title}</h3>
+    <p class="summary">{summary}</p>
+    {tags.length > 0 && (
+      <p class="tags">{tags.map((tag) => <span class="tag">{tag}</span>)}</p>
+    )}
+    <div class="links">
+      {links.code && <a class="btn secondary" href={links.code} target="_blank" rel="noopener">Code</a>}
+      {links.paper && <a class="btn secondary" href={links.paper} target="_blank" rel="noopener">Paper</a>}
+      {links.demo && <a class="btn secondary" href={links.demo} target="_blank" rel="noopener">Demo</a>}
+    </div>
+  </div>
+</article>
+
+<style>
+  .research-card { overflow: hidden; padding: 0; }
+  .cover { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+  .body { padding: 1.4rem; }
+  .research-card h3 { margin: 0.1em 0 0.3em; }
+  .summary { color: var(--text-muted); font-size: 0.95rem; margin: 0 0 0.8em; }
+  .tags { margin: 0 0 1em; }
+  .links { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .links .btn { font-size: 0.85rem; padding: 0.4em 0.9em; }
+</style>

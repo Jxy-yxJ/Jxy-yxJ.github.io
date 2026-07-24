@@ -1,0 +1,33 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import ResearchCard from '../../components/ResearchCard.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+export const getStaticPaths = () => [
+  { params: { lang: 'en' } },
+  { params: { lang: 'zh' } },
+];
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+
+const items = (await getCollection('research'))
+  .filter((i) => i.id.startsWith(lang + '/'))
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<PageLayout
+  title={t.researchTitle}
+  lang={lang}
+  intro={lang === 'zh' ? '机器人、具身智能与机器学习相关的项目与产出。' : 'Projects & outputs across robotics, embodied AI, and machine learning.'}
+>
+  <div class="grid">
+    {items.map((item) => <ResearchCard item={item} />)}
+  </div>
+  {items.length === 0 && (
+    <p style="color:var(--text-muted)">
+      {lang === 'zh' ? '内容待补充——可在后台 CMS 添加。' : 'Content coming soon — add entries via the CMS.'}
+    </p>
+  )}
+</PageLayout>

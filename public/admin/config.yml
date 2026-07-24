@@ -1,0 +1,106 @@
+# Decap CMS 配置
+# 文档：https://decapcms.org/docs/
+# 部署前请把 repo / base_url 改成你自己的值（见 README）。
+
+backend:
+  name: github
+  repo: yourname/yourname.github.io   # ← 改成 owner/repo
+  base_url: https://your-oauth-callback.pages.dev   # ← 改成你的 OAuth 回调地址
+  auth_scope: repo
+
+# Decap 原生 i18n：自动管理 en/ zh 子目录与语言标签
+i18n:
+  structure: multiple_folders
+  locales: [en, zh]
+  default_locale: en
+
+# 媒体：摄影原图直接进 public/photography（URL 字符串引用）
+media_folder: "public/photography"
+public_folder: "/photography"
+
+# publish_mode: editorial_workflow   # 如需 PR 审核流可取消注释
+
+collections:
+  - name: "notes"
+    label: "Notes / 日志"
+    folder: "src/content/notes"
+    i18n: true
+    create: true
+    fields:
+      - { name: title, label: "Title", i18n: true }
+      - { name: description, label: "Summary", i18n: true }
+      - { name: pubDate, label: "Date", widget: datetime }
+      - { name: tags, label: "Tags", widget: list }
+      - { name: draft, label: "Draft", widget: boolean, default: false }
+      - { name: body, label: "Body", widget: markdown, i18n: true }
+
+  - name: "research"
+    label: "Research / 科研"
+    folder: "src/content/research"
+    i18n: true
+    create: true
+    fields:
+      - { name: title, label: "Title", i18n: true }
+      - { name: role, label: "Role", i18n: true }
+      - { name: period, label: "Period" }
+      - { name: summary, label: "Summary", widget: text, i18n: true }
+      - name: tags
+        label: "Tags"
+        widget: "select"
+        multiple: true
+        options: [robotics, ml, embodied-ai, cv, nlp]
+      - name: links
+        label: "Links"
+        widget: object
+        fields:
+          - { name: code, label: "Code URL", widget: string }
+          - { name: paper, label: "Paper URL", widget: string }
+          - { name: demo, label: "Demo URL", widget: string }
+      - name: highlights
+        label: "Highlights"
+        widget: list
+        field: { name: item, label: "Point", widget: text, i18n: true }
+      - { name: cover, label: "Cover image", widget: image }
+      - { name: order, label: "Order", widget: number, default: 0 }
+      - { name: body, label: "Body", widget: markdown, i18n: true }
+
+  - name: "photography"
+    label: "Photography / 摄影"
+    folder: "src/content/photography"
+    i18n: true
+    create: true
+    fields:
+      - { name: title, label: "Title", i18n: true }
+      - { name: location, label: "Location", i18n: true }
+      - { name: date, label: "Date", widget: datetime }
+      - { name: camera, label: "Camera/Lens", i18n: true }
+      - { name: description, label: "Note", widget: text, i18n: true }
+      - { name: image, label: "Photo", widget: image }
+      - { name: width, label: "Width (px)", widget: number }
+      - { name: height, label: "Height (px)", widget: number }
+      - { name: cover, label: "Show on home?", widget: boolean, default: false }
+      - { name: order, label: "Order", widget: number, default: 0 }
+
+  - name: "music"
+    label: "Music / 音乐"
+    folder: "src/content/music"
+    i18n: true
+    create: true
+    fields:
+      - { name: title, label: "Title", i18n: true }
+      - { name: artist, label: "Artist", i18n: true }
+      - { name: embed, label: "Embed URL (Spotify/YouTube)", widget: string }
+      - { name: note, label: "Note", widget: text, i18n: true }
+      - { name: order, label: "Order", widget: number, default: 0 }
+
+  - name: "cv"
+    label: "CV / 简历"
+    folder: "src/content/cv"
+    i18n: true
+    create: false
+    fields:
+      - { name: name, label: "Name", i18n: true }
+      - { name: title, label: "Headline", i18n: true }
+      - { name: updated, label: "Updated", widget: datetime }
+      - { name: pdf, label: "PDF path", widget: string, default: "/cv/cv-en.pdf" }
+      - { name: body, label: "Content", widget: markdown, i18n: true }

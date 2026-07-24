@@ -1,0 +1,36 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import FormattedDate from './FormattedDate.astro';
+import type { CollectionEntry } from 'astro:content';
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  post: CollectionEntry<'notes'>;
+  lang: Lang;
+}
+const { post, lang } = Astro.props;
+const t = useTranslations(lang);
+const slug = post.id.split('/').slice(1).join('/');
+const href = getRelativeLocaleUrl(lang, `notes/${slug}`);
+---
+
+<article class="card note-card">
+  <p class="meta"><FormattedDate date={post.data.pubDate} lang={lang} /></p>
+  <h3><a href={href}>{post.data.title}</a></h3>
+  {post.data.description && <p class="desc">{post.data.description}</p>}
+  {post.data.tags.length > 0 && (
+    <p class="tags">{post.data.tags.map((tag) => <span class="tag">#{tag}</span>)}</p>
+  )}
+  <a class="more" href={href}>{t.readMore} →</a>
+</article>
+
+<style>
+  .note-card { display: flex; flex-direction: column; }
+  .note-card h3 { margin: 0.2em 0; }
+  .note-card h3 a { color: var(--text); }
+  .note-card h3 a:hover { color: var(--accent); text-decoration: none; }
+  .desc { color: var(--text-muted); font-size: 0.95rem; margin: 0.3em 0 0.8em; }
+  .tags { margin: 0 0 0.8em; }
+  .more { margin-top: auto; font-weight: 600; font-size: 0.92rem; }
+</style>

@@ -1,0 +1,62 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { SITE } from '../../consts';
+import { useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+export const getStaticPaths = () => [
+  { params: { lang: 'en' } },
+  { params: { lang: 'zh' } },
+];
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+
+const channels = [
+  { label: 'Email', href: `mailto:${SITE.email}`, value: SITE.email },
+  { label: 'GitHub', href: SITE.social.github },
+  { label: 'LinkedIn', href: SITE.social.linkedin },
+  { label: 'Google Scholar', href: SITE.social.scholar },
+  { label: 'Instagram', href: SITE.social.instagram },
+  { label: 'Spotify', href: SITE.social.spotify },
+];
+---
+
+<PageLayout
+  title={t.contactTitle}
+  lang={lang}
+  intro={lang === 'zh' ? '欢迎就科研合作、实习或交流联系我。' : 'Feel free to reach out about research, internships, or just to say hi.'}
+>
+  <ul class="contact-list">
+    {channels.map((c) => (
+      <li>
+        <span class="label">{c.label}</span>
+        <a href={c.href} target="_blank" rel="noopener">{c.value ?? c.href}</a>
+      </li>
+    ))}
+  </ul>
+</PageLayout>
+
+<style>
+  .contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.8rem;
+    max-width: 40rem;
+  }
+  .contact-list li {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .label {
+    width: 9rem;
+    flex-shrink: 0;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+</style>

@@ -1,0 +1,31 @@
+---
+import PostLayout from '../../../layouts/PostLayout.astro';
+import { getCollection, render } from 'astro:content';
+import type { Lang } from '../../../i18n/ui';
+
+export const getStaticPaths = async () => {
+  const notes = await getCollection('notes');
+  return notes.map((entry) => {
+    const [locale, ...rest] = entry.id.split('/');
+    return {
+      params: { lang: locale, slug: rest.join('/') },
+      props: { entry },
+    };
+  });
+};
+
+const { entry } = Astro.props;
+const lang = Astro.params.lang as Lang;
+const { Content } = await render(entry);
+---
+
+<PostLayout
+  title={entry.data.title}
+  lang={lang}
+  pubDate={entry.data.pubDate}
+  updatedDate={entry.data.updatedDate}
+  tags={entry.data.tags}
+  description={entry.data.description}
+>
+  <Content />
+</PostLayout>

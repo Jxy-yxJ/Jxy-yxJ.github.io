@@ -1,0 +1,86 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { SITE } from '../../consts';
+import { useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+export const getStaticPaths = () => [
+  { params: { lang: 'en' } },
+  { params: { lang: 'zh' } },
+];
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+---
+
+<PageLayout
+  title={t.aboutTitle}
+  lang={lang}
+  description={lang === 'zh' ? SITE.taglineZh : SITE.taglineEn}
+>
+
+  {lang === 'en' ? (
+    <>
+      <p>
+        I’m <strong>{SITE.author}</strong>, a student and builder working toward
+        <strong> embodied AI</strong> — the intersection of <strong>robotics, computer vision,
+        and machine learning</strong> where machines perceive, reason, and act in the physical world.
+      </p>
+      <h2>Research interests</h2>
+      <ul>
+        <li>Visuomotor policy learning & imitation learning for manipulation</li>
+        <li>Sim-to-real transfer and world models for robots</li>
+        <li>Multimodal perception (vision + language + touch)</li>
+        <li>Humanoid & mobile manipulation systems</li>
+      </ul>
+      <h2>Why this site</h2>
+      <p>
+        This site is my public notebook: research updates, learning progress, and the
+        photography &amp; music that keep me curious. It’s also part of my application
+        portfolio for graduate study in the US.
+      </p>
+      <h2>Education &amp; background</h2>
+      <p>Replace this with your degree, institution, and key coursework. (Edit in <code>src/pages/[lang]/about.astro</code> or via the CMS.)</p>
+      <h2>Selected skills</h2>
+      <p>
+        <span class="tag">Python</span><span class="tag">PyTorch</span>
+        <span class="tag">ROS 2</span><span class="tag">C++</span>
+        <span class="tag">CUDA</span><span class="tag">Diffusion Models</span>
+        <span class="tag">Transformer</span>
+      </p>
+    </>
+  ) : (
+    <>
+      <p>
+        我是 <strong>{SITE.author}</strong>，一名学生与开发者，研究方向是
+        <strong>具身智能（Embodied AI）</strong>——它站在
+        <strong>机器人、计算机视觉与机器学习</strong>的交叉点，让机器能够感知、推理并在真实世界中行动。
+      </p>
+      <h2>研究兴趣</h2>
+      <ul>
+        <li>面向操作的视觉运动策略学习与模仿学习</li>
+        <li>仿真到现实的迁移（Sim-to-real）与机器人世界模型</li>
+        <li>多模态感知（视觉 + 语言 + 触觉）</li>
+        <li>人形机器人与移动操作系统的搭建</li>
+      </ul>
+      <h2>为什么做这个站点</h2>
+      <p>
+        这个站点是我的公开笔记：科研进展、学习记录，以及让我保持好奇心的摄影与音乐。
+        它同时也是我申请美国研究生用的作品集的一部分。
+      </p>
+      <h2>教育背景</h2>
+      <p>在这里填写你的学位、院校与核心课程。（可在 <code>src/pages/[lang]/about.astro</code> 或通过后台 CMS 编辑。）</p>
+      <h2>主要技能</h2>
+      <p>
+        <span class="tag">Python</span><span class="tag">PyTorch</span>
+        <span class="tag">ROS 2</span><span class="tag">C++</span>
+        <span class="tag">CUDA</span><span class="tag">扩散模型</span>
+        <span class="tag">Transformer</span>
+      </p>
+    </>
+  )}
+
+  <p style="margin-top:2rem">
+    <a class="btn" href={getRelativeLocaleUrl(lang, 'research')}>{t.researchTitle} →</a>
+  </p>
+</PageLayout>

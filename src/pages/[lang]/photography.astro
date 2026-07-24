@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PhotoGallery from '../../components/PhotoGallery.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+export const getStaticPaths = () => [
+  { params: { lang: 'en' } },
+  { params: { lang: 'zh' } },
+];
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+
+const photos = (await getCollection('photography'))
+  .filter((p) => p.id.startsWith(lang + '/'))
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout title={t.photographyTitle} lang={lang} immersive={true}>
+  <header class="photo-head">
+    <h1>{t.photographyTitle}</h1>
+    <p class="lead">
+      {lang === 'zh' ? '点击任意一张查看大图，每张都附拍摄笔记。' : 'Click any photo to view it large — each carries its own note.'}
+    </p>
+  </header>
+  {photos.length > 0 ? (
+    <PhotoGallery photos={photos} />
+  ) : (
+    <p style="color:var(--text-muted)">
+      {lang === 'zh' ? '作品待上传——可在后台 CMS 添加，图片会存到 public/photography。' : 'Photos coming soon — add them via the CMS; images land in public/photography.'}
+    </p>
+  )}
+</BaseLayout>
+
+<style>
+  .photo-head { padding: 3rem 0 0; }
+  .lead { color: rgba(236, 229, 219, 0.65); }
+</style>

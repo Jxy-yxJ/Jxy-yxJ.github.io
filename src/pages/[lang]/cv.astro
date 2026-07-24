@@ -1,0 +1,36 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { getCollection, render } from 'astro:content';
+import { useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+export const getStaticPaths = () => [
+  { params: { lang: 'en' } },
+  { params: { lang: 'zh' } },
+];
+const { lang } = Astro.params as { lang: Lang };
+const t = useTranslations(lang);
+
+const entry = (await getCollection('cv')).find((c) => c.id.startsWith(lang + '/'));
+const { Content } = entry ? await render(entry) : { Content: null };
+---
+
+<PageLayout title={t.cvTitle} lang={lang}>
+  {entry && (
+    <p style="margin-bottom:1.5rem">
+      <a class="btn" href={entry.data.pdf} target="_blank" rel="noopener" download>
+        ↓ {t.downloadPdf}
+      </a>
+      <span class="updated"> · {t.updated} {entry.data.updated.toISOString().slice(0, 10)}</span>
+    </p>
+  )}
+  {Content ? <Content /> : (
+    <p style="color:var(--text-muted)">
+      {lang === 'zh' ? '简历内容待补充——在后台 CMS 编辑，并放入 public/cv/ 下的 PDF。' : 'CV content coming soon — edit it in the CMS and drop a PDF into public/cv/.'}
+    </p>
+  )}
+</PageLayout>
+
+<style>
+  .updated { color: var(--text-muted); font-size: 0.9rem; }
+</style>
