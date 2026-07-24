@@ -11,14 +11,21 @@ export const getStaticPaths = () => [
 const { lang } = Astro.params as { lang: Lang };
 const t = useTranslations(lang);
 
-const channels = [
-  { label: 'Email', href: `mailto:${SITE.email}`, value: SITE.email },
+const emailChannels = SITE.emails.map((e, i) => ({
+  label: i === 0 ? 'Email' : '',
+  href: `mailto:${e}`,
+  value: e,
+}));
+
+const socialChannels = [
   { label: 'GitHub', href: SITE.social.github },
   { label: 'LinkedIn', href: SITE.social.linkedin },
   { label: 'Google Scholar', href: SITE.social.scholar },
   { label: 'Instagram', href: SITE.social.instagram },
   { label: 'Spotify', href: SITE.social.spotify },
-];
+].filter((c) => c.href);
+
+const channels = [...emailChannels, ...socialChannels];
 ---
 
 <PageLayout

@@ -24,15 +24,21 @@ export const SITE = {
     roleZh: '鼓手',
   },
 
-  // 邮箱
-  email: 'you@example.com',
+  // 邮箱（主邮箱用于 Footer / mailto 链接）
+  email: '23061740@hdu.edu.cn',
 
-  // 社交链接（上线前请替换成你的真实链接）
+  // 联系页展示的全部邮箱
+  emails: [
+    '23061740@hdu.edu.cn',
+    'jiaoxiangyue3@gmail.com',
+  ],
+
+  // 社交链接（没有的留空字符串，联系页会自动隐藏）
   social: {
     github: 'https://github.com/Jxy-yxJ',
-    linkedin: 'https://www.linkedin.com/in/yourname',
-    scholar: 'https://scholar.google.com/citations?user=XXXX',
-    instagram: 'https://www.instagram.com/yourname',
-    spotify: 'https://open.spotify.com/user/yourname',
+    linkedin: 'https://www.linkedin.com/in/xinyu-jiang-a00b17402',
+    scholar: '',
+    instagram: '',
+    spotify: '',
   },
 };
