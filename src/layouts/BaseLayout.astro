@@ -25,5 +25,8 @@ const { title, description, lang, image, immersive = false } = Astro.props;
       <slot />
     </main>
     <Footer lang={lang} />
+    <script>
+      import '../scripts/reveal';
+    </script>
   </body>
 </html>

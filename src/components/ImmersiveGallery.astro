@@ -1,0 +1,118 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+import { useTranslations } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  photos: CollectionEntry<'photography'>[];
+  lang: Lang;
+}
+const { photos, lang } = Astro.props;
+const t = useTranslations(lang);
+const [hero, ...rest] = photos;
+
+function captionFor(p: CollectionEntry<'photography'>) {
+  return [
+    p.data.title,
+    p.data.location && `📍 ${p.data.location}`,
+    p.data.camera && `📷 ${p.data.camera}`,
+    p.data.date && `🗓 ${p.data.date.toISOString().slice(0, 10)}`,
+    p.data.description,
+  ]
+    .filter(Boolean)
+    .join('<br>');
+}
+---
+
+{hero && (
+  <section class="ig-hero">
+    <img class="ig-hero-img" src={hero.data.image} alt={hero.data.title} />
+    <div class="ig-hero-veil" aria-hidden="true"></div>
+    <div class="ig-hero-text">
+      <p class="ig-eyebrow">{lang === 'zh' ? '摄影集' : 'Photography'}</p>
+      <h1>{t.photographyTitle}</h1>
+      <p class="ig-hint">{lang === 'zh' ? '下滑浏览 · 点击查看大图与拍摄笔记' : 'Scroll to explore · click for large view & notes'}</p>
+    </div>
+  </section>
+)}
+
+<section class="ig-stream" id="pswp-gallery">
+  {rest.map((p, i) => (
+    <figure class:list={['ig-panel', { flip: i % 2 === 1 }]} data-reveal>
+      <a
+        class="ig-frame"
+        href={p.data.image}
+        target="_blank"
+        rel="noopener"
+        data-pswp-width={p.data.width ?? 1600}
+        data-pswp-height={p.data.height ?? 1067}
+        data-caption={captionFor(p)}
+      >
+        <img src={p.data.image} alt={p.data.title} loading="lazy" decoding="async" data-parallax="0.07" />
+      </a>
+      <figcaption class="ig-cap">
+        <h3>{p.data.title}</h3>
+        <p class="ig-meta">
+          {p.data.location && <span>📍 {p.data.location}</span>}
+          {p.data.camera && <span>📷 {p.data.camera}</span>}
+          {p.data.date && <span>🗓 <FormattedDate date={p.data.date} lang={lang} /></span>}
+        </p>
+        {p.data.description && <p class="ig-note">{p.data.description}</p>}
+      </figcaption>
+    </figure>
+  ))}
+</section>
+
+<script>
+  import '../scripts/photoswipe';
+  import '../scripts/parallax';
+</script>
+
+<style>
+  /* ---------- Hero ---------- */
+  .ig-hero {
+    position: relative;
+    height: 100svh;
+    margin: calc(-1 * 0px) calc(50% - 50vw) 0;
+    width: 100vw;
+    overflow: hidden;
+    display: flex; align-items: flex-end;
+  }
+  .ig-hero-img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover;
+    animation: kenburns 14s var(--ease) forwards;
+  }
+  .ig-hero-veil {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(14,12,9,0.15) 40%, rgba(14,12,9,0.78) 100%);
+  }
+  .ig-hero-text { position: relative; padding: 0 6vw 7vh; color: #f3ede3; max-width: 60ch; }
+  .ig-eyebrow { margin: 0 0 0.4em; font-size: var(--fs-tiny); letter-spacing: 0.2em; text-transform: uppercase; color: rgba(243,237,227,0.75); }
+  .ig-hero-text h1 { margin: 0 0 0.3em; font-size: clamp(2.4rem, 6vw, 4rem); color: #fff; }
+  .ig-hint { margin: 0; font-size: var(--fs-small); color: rgba(243,237,227,0.8); }
+
+  /* ---------- 照片流 ---------- */
+  .ig-stream { display: flex; flex-direction: column; gap: clamp(4rem, 10vh, 8rem); padding: clamp(3rem, 8vh, 6rem) 0; }
+  .ig-panel { display: flex; flex-direction: column; align-items: center; gap: 1.4rem; margin: 0; }
+  .ig-frame {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 60svh; width: 100%;
+    border-radius: var(--radius); overflow: visible;
+  }
+  .ig-frame img {
+    max-height: 80svh; width: auto; max-width: 100%;
+    border-radius: var(--radius);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+    will-change: transform;
+  }
+  .ig-cap { max-width: 46ch; text-align: center; color: rgba(236,229,219,0.85); }
+  .ig-cap h3 { margin: 0 0 0.4em; color: #fff; font-size: 1.4rem; }
+  .ig-meta { display: flex; flex-wrap: wrap; gap: 0.4em 1.2em; justify-content: center; margin: 0 0 0.6em; font-size: var(--fs-small); color: rgba(236,229,219,0.6); }
+  .ig-note { margin: 0; font-size: var(--fs-body); line-height: 1.7; font-family: var(--font-serif); font-style: italic; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ig-hero-img { animation: none; }
+  }
+</style>

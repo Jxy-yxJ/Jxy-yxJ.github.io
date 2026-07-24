@@ -1,0 +1,73 @@
+---
+interface Props {
+  title: string;
+  date?: Date;
+  venue?: string;
+  city?: string;
+  poster?: string;
+  note?: string;
+  index?: number;
+}
+const { title, date, venue, city, poster, note, index = 0 } = Astro.props;
+const rotate = index % 2 === 0 ? '-1.6deg' : '1.4deg';
+const day = date ? String(date.getDate()).padStart(2, '0') : '';
+const month = date ? date.toLocaleString('en-US', { month: 'short' }).toUpperCase() : '';
+const year = date ? String(date.getFullYear()) : '';
+---
+
+<article class="gig" style={`--rot:${rotate}`}>
+  {poster ? (
+    <img class="gig-poster" src={poster} alt={title} loading="lazy" />
+  ) : (
+    <div class="gig-css-poster" aria-hidden="true">
+      <span class="gig-live">LIVE</span>
+      <span class="gig-day">{day}</span>
+      <span class="gig-month">{month} · {year}</span>
+      <span class="gig-title">{title}</span>
+      {venue && <span class="gig-venue">{venue}</span>}
+      {city && <span class="gig-city">{city}</span>}
+    </div>
+  )}
+  {note && <p class="gig-note">{note}</p>}
+</article>
+
+<style>
+  .gig {
+    position: relative;
+    transform: rotate(var(--rot));
+    transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+  }
+  .gig:hover { transform: rotate(0deg) scale(1.02); box-shadow: var(--shadow-lg); z-index: 2; }
+  /* 胶带角 */
+  .gig::before {
+    content: '';
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%) rotate(-2deg);
+    width: 84px; height: 26px;
+    background: color-mix(in srgb, var(--accent) 30%, rgba(255,255,255,0.5));
+    opacity: 0.7; border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    z-index: 3;
+  }
+  .gig-poster { width: 100%; border-radius: var(--radius-sm); display: block; box-shadow: var(--shadow); }
+  .gig-css-poster {
+    aspect-ratio: 3 / 4;
+    border-radius: var(--radius-sm);
+    background:
+      radial-gradient(120% 90% at 80% 0%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%),
+      var(--bg-elevated);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    gap: 0.2rem; padding: 1.4rem; text-align: center;
+  }
+  .gig-live {
+    font-size: var(--fs-tiny); letter-spacing: 0.3em; color: var(--accent-strong);
+    border: 1px solid var(--accent); padding: 0.2em 0.8em; border-radius: 999px; margin-bottom: 0.6rem;
+  }
+  .gig-day { font-family: var(--font-serif); font-size: clamp(3rem, 8vw, 4.6rem); font-weight: 700; line-height: 1; color: var(--text); }
+  .gig-month { font-size: var(--fs-small); letter-spacing: 0.18em; color: var(--text-muted); margin-bottom: 0.8rem; }
+  .gig-title { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; color: var(--text); }
+  .gig-venue { font-size: var(--fs-small); color: var(--accent-ink); font-weight: 600; margin-top: 0.6rem; }
+  .gig-city { font-size: var(--fs-tiny); color: var(--text-faint); }
+  .gig-note { margin: 0.7rem 0 0; font-size: var(--fs-small); color: var(--text-muted); font-style: italic; text-align: center; }
+</style>

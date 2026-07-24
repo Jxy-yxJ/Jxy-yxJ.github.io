@@ -1,5 +1,5 @@
 ---
-name: 你的名字
+name: 江鑫宇
 title: 机器人 / 具身智能研究者
 updated: 2024-09-01
 pdf: /cv/cv-zh.pdf

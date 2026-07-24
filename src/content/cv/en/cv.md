@@ -1,5 +1,5 @@
 ---
-name: Your Name
+name: Xinyu Jiang
 title: Robotics & Embodied AI researcher
 updated: 2024-09-01
 pdf: /cv/cv-en.pdf

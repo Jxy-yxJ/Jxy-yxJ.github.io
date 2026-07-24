@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import { useTranslations } from '../i18n/utils';
+import { SITE } from '../consts';
 import type { Lang } from '../i18n/ui';
 
 interface Props {
@@ -17,7 +18,7 @@ const { title, lang, pubDate, updatedDate, tags = [], description } = Astro.prop
 const t = useTranslations(lang);
 ---
 
-<BaseLayout title={`${title} · Your Name`} description={description} lang={lang}>
+<BaseLayout title={`${title} · ${SITE.author}`} description={description} lang={lang}>
   <article class="post">
     <header class="post-head">
       <h1>{title}</h1>

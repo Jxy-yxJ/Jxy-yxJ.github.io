@@ -33,6 +33,34 @@ export const ui = {
     downloadPdf: 'Download PDF',
     viewWeb: 'View web version',
     by: 'by',
+    // 首页板块
+    sections: {
+      about: 'About',
+      education: 'Education',
+      experience: 'Experience',
+      projects: 'Projects',
+      publications: 'Publications',
+      awards: 'Awards',
+      beyond: 'Beyond work',
+    },
+    hero: {
+      robotAlt: 'Two little robots living on this page',
+    },
+    // 乐队页
+    band: {
+      tagline: 'Indie band · I play the drums',
+      aboutBand: 'About the band',
+      members: 'Members',
+      tracks: 'Tracks',
+      gigs: 'Gigs',
+      notes: 'Band notes',
+      listenNow: 'Listen',
+    },
+    // 画廊
+    gallery: {
+      shotNote: 'Field note',
+      backTop: 'Back to top',
+    },
   },
   zh: {
     nav: {
@@ -65,6 +93,31 @@ export const ui = {
     downloadPdf: '下载 PDF',
     viewWeb: '查看网页版',
     by: '表演者',
+    sections: {
+      about: '关于',
+      education: '教育',
+      experience: '经历',
+      projects: '项目',
+      publications: '发表',
+      awards: '奖项',
+      beyond: '工作之外',
+    },
+    hero: {
+      robotAlt: '住在这个页面上的两个小机器人',
+    },
+    band: {
+      tagline: '独立乐队 · 我是鼓手',
+      aboutBand: '关于乐队',
+      members: '成员',
+      tracks: '作品',
+      gigs: '演出',
+      notes: '乐队笔记',
+      listenNow: '收听',
+    },
+    gallery: {
+      shotNote: '拍摄笔记',
+      backTop: '回到顶部',
+    },
   },
 } as const;
 

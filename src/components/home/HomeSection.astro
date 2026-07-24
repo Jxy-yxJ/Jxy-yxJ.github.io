@@ -1,0 +1,41 @@
+---
+interface Props {
+  index: string; // "01"
+  title: string;
+  id?: string;
+  delay?: number; // reveal 延迟 ms
+}
+const { index, title, id, delay = 0 } = Astro.props;
+---
+
+<section class="home-section" id={id} data-reveal style={`--d:${delay}ms`}>
+  <header class="sec-head">
+    <span class="sec-index">{index}</span>
+    <h2>{title}</h2>
+    <span class="sec-rule" aria-hidden="true"></span>
+  </header>
+  <div class="sec-body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .home-section { padding: var(--space-4) 0; border-bottom: 1px solid var(--hairline); }
+  .home-section:last-child { border-bottom: none; }
+  .sec-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.6rem; }
+  .sec-index {
+    font-family: var(--font-sans);
+    font-size: var(--fs-tiny);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--accent-strong);
+  }
+  .sec-head h2 { margin: 0; font-size: var(--fs-h2); }
+  .sec-rule {
+    flex: 1; height: 1px; background: var(--hairline);
+    transform-origin: left; transform: scaleX(0);
+    transition: transform 0.9s var(--ease) 0.15s;
+  }
+  .is-in .sec-rule, [data-reveal].is-in .sec-rule { transform: scaleX(1); }
+  .sec-body { max-width: var(--maxw-wide); }
+</style>

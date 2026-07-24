@@ -1,0 +1,64 @@
+---
+import { useTranslations } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+interface Props {
+  lang: Lang;
+  class?: string;
+}
+const { lang, class: className } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<div class:list={['robot-scene', className]} data-robot-scene aria-hidden="true">
+  <div class="robot-fallback">
+    <!-- 静态降级插画：双机器人侧影（无 WebGL / 加载失败时显示） -->
+    <svg viewBox="0 0 340 200" width="340" height="200" role="img" aria-label={t.hero.robotAlt}>
+      <g fill="none" stroke="currentColor" stroke-width="2" opacity="0.5">
+        <!-- 大机器人 -->
+        <rect x="150" y="40" width="60" height="46" rx="12" />
+        <rect x="138" y="92" width="84" height="66" rx="16" />
+        <circle cx="150" cy="170" r="12" />
+        <circle cx="210" cy="170" r="12" />
+        <circle cx="168" cy="62" r="4" fill="currentColor" />
+        <circle cx="192" cy="62" r="4" fill="currentColor" />
+        <circle cx="180" cy="120" r="6" fill="currentColor" opacity="0.6" />
+        <!-- 小机器人 -->
+        <rect x="40" y="112" width="52" height="46" rx="14" />
+        <line x1="54" y1="112" x2="54" y2="96" />
+        <line x1="78" y1="112" x2="78" y2="96" />
+        <circle cx="54" cy="92" r="7" />
+        <circle cx="78" cy="92" r="7" />
+        <circle cx="52" cy="166" r="8" />
+        <circle cx="80" cy="166" r="8" />
+      </g>
+    </svg>
+  </div>
+</div>
+
+<script>
+  const el = document.querySelector('[data-robot-scene]') as HTMLElement | null;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (el) {
+    const io = new IntersectionObserver(
+      async ([entry]) => {
+        if (!entry.isIntersecting) return;
+        io.disconnect();
+        try {
+          const { initRobots } = await import('../scripts/robot-scene');
+          await initRobots(el, { reduced });
+        } catch {
+          el.classList.add('robot-failed');
+        }
+      },
+      { rootMargin: '300px' }
+    );
+    io.observe(el);
+  }
+</script>
+
+<style>
+  .robot-scene { position: relative; width: 100%; height: 100%; min-height: 280px; color: var(--text); }
+  .robot-scene canvas { display: block; width: 100% !important; height: 100% !important; outline: none; }
+  .robot-fallback { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; }
+  .robot-failed .robot-fallback { display: flex; }
+</style>

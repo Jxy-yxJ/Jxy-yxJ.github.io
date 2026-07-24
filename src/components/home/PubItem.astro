@@ -1,0 +1,45 @@
+---
+interface Props {
+  title: string;
+  authors: string;
+  venue: string;
+  year: string;
+  link?: string;
+}
+const { title, authors, venue, year, link } = Astro.props;
+---
+
+<div class="pub">
+  <span class="pub-year">{year}</span>
+  <div class="pub-body">
+    <h3 class="pub-title">
+      {link ? <a href={link} target="_blank" rel="noopener">{title}</a> : title}
+    </h3>
+    <p class="pub-authors">{authors}</p>
+    <p class="pub-venue"><em>{venue}</em></p>
+  </div>
+  <span class="pub-arrow" aria-hidden="true">→</span>
+</div>
+
+<style>
+  .pub {
+    display: grid;
+    grid-template-columns: 4rem 1fr auto;
+    gap: 1.2rem;
+    align-items: baseline;
+    padding: 1rem 0.6rem;
+    margin-inline: -0.6rem;
+    border-radius: var(--radius-sm);
+    transition: background 0.2s var(--ease);
+  }
+  .pub + .pub { border-top: 1px solid var(--hairline); }
+  .pub:hover { background: var(--accent-soft); }
+  .pub-year { font-size: var(--fs-small); color: var(--text-faint); font-variant-numeric: tabular-nums; }
+  .pub-title { margin: 0; font-size: 1.1rem; font-weight: 600; }
+  .pub-title a { color: var(--text); }
+  .pub-title a:hover { color: var(--accent); text-decoration: none; }
+  .pub-authors { margin: 0.2em 0 0; font-size: var(--fs-small); color: var(--text-muted); }
+  .pub-venue { margin: 0.15em 0 0; font-size: var(--fs-small); color: var(--accent-ink); }
+  .pub-arrow { color: var(--accent); opacity: 0; transform: translateX(-4px); transition: all 0.2s var(--ease); }
+  .pub:hover .pub-arrow { opacity: 1; transform: translateX(0); }
+</style>

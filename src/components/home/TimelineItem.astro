@@ -1,0 +1,53 @@
+---
+interface Props {
+  period: string;
+  title: string;
+  subtitle?: string;
+  meta?: string; // e.g. advisor
+  details?: string[];
+}
+const { period, title, subtitle, meta, details = [] } = Astro.props;
+---
+
+<div class="tl-item">
+  <div class="tl-left">
+    <span class="tl-dot" aria-hidden="true"></span>
+    <span class="tl-period">{period}</span>
+  </div>
+  <div class="tl-right">
+    <h3>{title}</h3>
+    {subtitle && <p class="tl-sub">{subtitle}</p>}
+    {meta && <p class="tl-meta">{meta}</p>}
+    {details.length > 0 && (
+      <ul class="tl-details">
+        {details.map((d) => <li>{d}</li>)}
+      </ul>
+    )}
+  </div>
+</div>
+
+<style>
+  .tl-item {
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+    gap: 1.5rem;
+    padding: 1.1rem 0;
+  }
+  .tl-item + .tl-item { border-top: 1px dashed var(--hairline); }
+  .tl-left { display: flex; align-items: baseline; gap: 0.7rem; }
+  .tl-dot {
+    width: 8px; height: 8px; border-radius: 999px; flex-shrink: 0;
+    background: var(--accent); transform: translateY(1px);
+  }
+  .tl-item:hover .tl-dot { animation: pulse 1.6s var(--ease) infinite; }
+  .tl-period { font-size: var(--fs-small); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .tl-right h3 { margin: 0 0 0.2em; font-size: 1.15rem; }
+  .tl-sub { margin: 0; color: var(--text); font-weight: 500; }
+  .tl-meta { margin: 0.15em 0 0; color: var(--text-muted); font-size: var(--fs-small); font-style: italic; }
+  .tl-details { margin: 0.6em 0 0; padding-left: 1.2em; color: var(--text-muted); font-size: var(--fs-small); }
+  .tl-details li { margin: 0.25em 0; }
+  @media (max-width: 640px) {
+    .tl-item { grid-template-columns: 1fr; gap: 0.3rem; }
+    .tl-left { order: 2; }
+  }
+</style>

@@ -82,15 +82,25 @@ collections:
       - { name: order, label: "Order", widget: number, default: 0 }
 
   - name: "music"
-    label: "Music / 音乐"
+    label: "Music / 音乐（乐队）"
     folder: "src/content/music"
     i18n: true
     create: true
     fields:
       - { name: title, label: "Title", i18n: true }
-      - { name: artist, label: "Artist", i18n: true }
-      - { name: embed, label: "Embed URL (Spotify/YouTube)", widget: string }
-      - { name: note, label: "Note", widget: text, i18n: true }
+      - name: type
+        label: "Type"
+        widget: select
+        options: [track, gig, playlist, note]
+        default: track
+      - { name: artist, label: "Artist", i18n: true, required: false }
+      - { name: audio, label: "Audio file (mp3)", widget: file, required: false, media_folder: "/public/audio", public_folder: "/audio" }
+      - { name: embed, label: "Embed URL (Spotify/YouTube)", widget: string, required: false }
+      - { name: date, label: "Date", widget: datetime, required: false }
+      - { name: venue, label: "Venue", i18n: true, required: false }
+      - { name: city, label: "City", i18n: true, required: false }
+      - { name: poster, label: "Poster image", widget: image, required: false }
+      - { name: note, label: "Note", widget: text, i18n: true, required: false }
       - { name: order, label: "Order", widget: number, default: 0 }
 
   - name: "cv"
@@ -104,3 +114,68 @@ collections:
       - { name: updated, label: "Updated", widget: datetime }
       - { name: pdf, label: "PDF path", widget: string, default: "/cv/cv-en.pdf" }
       - { name: body, label: "Content", widget: markdown, i18n: true }
+
+  - name: "education"
+    label: "Education / 教育"
+    folder: "src/content/education"
+    i18n: true
+    create: true
+    fields:
+      - { name: school, label: "School", i18n: true }
+      - { name: degree, label: "Degree", i18n: true }
+      - { name: field, label: "Field", i18n: true, required: false }
+      - { name: period, label: "Period" }
+      - name: details
+        label: "Details"
+        widget: list
+        required: false
+        field: { name: item, label: "Detail", widget: text, i18n: true }
+      - { name: order, label: "Order", widget: number, default: 0 }
+
+  - name: "experience"
+    label: "Experience / 经历"
+    folder: "src/content/experience"
+    i18n: true
+    create: true
+    fields:
+      - { name: org, label: "Organization", i18n: true }
+      - { name: role, label: "Role", i18n: true }
+      - { name: advisor, label: "Advisor", i18n: true, required: false }
+      - { name: period, label: "Period" }
+      - name: details
+        label: "Details"
+        widget: list
+        required: false
+        field: { name: item, label: "Detail", widget: text, i18n: true }
+      - { name: order, label: "Order", widget: number, default: 0 }
+
+  - name: "publications"
+    label: "Publications / 发表"
+    folder: "src/content/publications"
+    i18n: true
+    create: true
+    fields:
+      - { name: title, label: "Title", i18n: true }
+      - { name: authors, label: "Authors", i18n: true }
+      - { name: venue, label: "Venue", i18n: true }
+      - { name: year, label: "Year" }
+      - name: links
+        label: "Links"
+        widget: object
+        required: false
+        fields:
+          - { name: paper, label: "Paper URL", widget: string, required: false }
+          - { name: code, label: "Code URL", widget: string, required: false }
+          - { name: project, label: "Project URL", widget: string, required: false }
+      - { name: order, label: "Order", widget: number, default: 0 }
+
+  - name: "awards"
+    label: "Awards / 奖项"
+    folder: "src/content/awards"
+    i18n: true
+    create: true
+    fields:
+      - { name: title, label: "Title", i18n: true }
+      - { name: org, label: "Organization", i18n: true, required: false }
+      - { name: year, label: "Year" }
+      - { name: order, label: "Order", widget: number, default: 0 }

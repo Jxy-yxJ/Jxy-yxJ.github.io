@@ -1,0 +1,101 @@
+---
+interface Track {
+  title: string;
+  src: string;
+  note?: string;
+}
+interface Props {
+  tracks: Track[];
+}
+const { tracks } = Astro.props;
+---
+
+<div class="ap" data-audio-player>
+  <audio class="ap-el" preload="none"></audio>
+  <div class="ap-now">
+    <button class="ap-play" type="button" aria-label="Play/Pause">▶</button>
+    <div class="ap-info">
+      <p class="ap-title">{tracks[0]?.title ?? '—'}</p>
+      <div class="ap-bar" role="slider" aria-label="Seek"><span class="ap-fill"></span></div>
+    </div>
+    <span class="ap-time">0:00</span>
+  </div>
+  <ul class="ap-list">
+    {tracks.map((t) => (
+      <li>
+        <button class="ap-track" type="button" data-src={t.src} data-title={t.title}>
+          <span class="ap-track-name">{t.title}</span>
+          {t.note && <span class="ap-track-note">{t.note}</span>}
+        </button>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<script>
+  const root = document.querySelector('[data-audio-player]') as HTMLElement | null;
+  if (root) {
+    const audio = root.querySelector('.ap-el') as HTMLAudioElement;
+    const playBtn = root.querySelector('.ap-play') as HTMLButtonElement;
+    const titleEl = root.querySelector('.ap-title') as HTMLElement;
+    const fill = root.querySelector('.ap-fill') as HTMLElement;
+    const timeEl = root.querySelector('.ap-time') as HTMLElement;
+    const bar = root.querySelector('.ap-bar') as HTMLElement;
+    const trackBtns = Array.from(root.querySelectorAll('.ap-track')) as HTMLButtonElement[];
+
+    const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+
+    function load(btn: HTMLButtonElement) {
+      trackBtns.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      audio.src = btn.dataset.src || '';
+      titleEl.textContent = btn.dataset.title || '—';
+      audio.play().catch(() => {});
+    }
+    trackBtns.forEach((btn) => btn.addEventListener('click', () => load(btn)));
+    playBtn.addEventListener('click', () => {
+      if (!audio.src && trackBtns[0]) return load(trackBtns[0]);
+      audio.paused ? audio.play().catch(() => {}) : audio.pause();
+    });
+    audio.addEventListener('play', () => (playBtn.textContent = '⏸'));
+    audio.addEventListener('pause', () => (playBtn.textContent = '▶'));
+    audio.addEventListener('timeupdate', () => {
+      if (audio.duration) {
+        fill.style.width = (audio.currentTime / audio.duration) * 100 + '%';
+        timeEl.textContent = fmt(audio.currentTime);
+      }
+    });
+    bar.addEventListener('click', (e) => {
+      if (!audio.duration) return;
+      const rect = bar.getBoundingClientRect();
+      audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
+    });
+  }
+</script>
+
+<style>
+  .ap { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elevated); padding: 1.2rem; }
+  .ap-now { display: flex; align-items: center; gap: 1rem; }
+  .ap-play {
+    width: 46px; height: 46px; border-radius: 999px; flex-shrink: 0;
+    background: var(--accent); color: #fff; border: none; font-size: 1.1rem; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background 0.2s var(--ease), transform 0.15s var(--ease);
+  }
+  .ap-play:hover { background: var(--accent-strong); transform: scale(1.05); }
+  .ap-info { flex: 1; min-width: 0; }
+  .ap-title { margin: 0 0 0.5em; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ap-bar { height: 6px; border-radius: 999px; background: var(--accent-soft); cursor: pointer; overflow: hidden; }
+  .ap-fill { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 999px; }
+  .ap-time { font-size: var(--fs-small); color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .ap-list { list-style: none; margin: 1rem 0 0; padding: 0; border-top: 1px solid var(--hairline); }
+  .ap-track {
+    width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+    background: none; border: none; padding: 0.7rem 0.4rem; cursor: pointer; text-align: left;
+    color: var(--text); border-bottom: 1px solid var(--hairline); font-size: var(--fs-small);
+    transition: color 0.15s var(--ease), padding-left 0.15s var(--ease);
+  }
+  .ap-track:hover { color: var(--accent); padding-left: 0.7rem; }
+  .ap-track.active { color: var(--accent-strong); font-weight: 600; }
+  .ap-track-note { color: var(--text-faint); font-size: var(--fs-tiny); }
+</style>
