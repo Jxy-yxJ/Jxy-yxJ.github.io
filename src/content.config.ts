@@ -28,6 +28,7 @@ const research = defineCollection({
         code: z.string().url().optional(),
         paper: z.string().url().optional(),
         demo: z.string().url().optional(),
+        page: z.string().url().optional(), // internal project page
       })
       .default({}),
     highlights: z.array(z.string()).default([]),

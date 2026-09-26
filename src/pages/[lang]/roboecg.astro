@@ -1,0 +1,342 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+import { SITE } from '../../consts';
+import type { Lang } from '../../i18n/ui';
+
+export const getStaticPaths = () => [
+  { params: { lang: 'en' } },
+  { params: { lang: 'zh' } },
+];
+const { lang } = Astro.params as { Lang: Lang };
+
+const REPO = 'https://github.com/Jxy-yxJ/RoboECG';
+const VIDEOS = `${REPO}/tree/main/runs/m4`;
+const BIB = `@software{jiang2026roboecg,
+  author    = {Jiang, Xinyu},
+  title     = {{RoboECG}: autonomous robotic placement of
+               12-lead {ECG} precordial electrodes in {Isaac} {Sim}},
+  year      = {2026},
+  version   = {v1.0.0},
+  publisher = {GitHub},
+  url       = {${REPO}},
+  license   = {MIT}
+}`;
+
+const L = {
+  en: {
+    title: 'RoboECG',
+    intro:
+      'Autonomous robotic placement of the six precordial ECG electrodes (V1–V6) in Isaac Sim — perception, clinical-rule localisation, press execution and a closed self-check loop.',
+    tags: ['Medical robotics', 'Depth perception', 'Simulation', 'Isaac Sim', 'UR3'],
+    links: { repo: 'Repository', videos: 'Videos', docs: 'Technical reports' },
+    overviewTitle: 'Overview',
+    overview: [
+      'A robot arm perceives a supine patient\u2019s chest with an overhead depth camera, works out where the six precordial electrodes belong, presses them onto the skin and then checks its own work \u2014 no human in the loop after the patient is in place.',
+      'The execution side of ECG electrode placement is a gap in the published literature: existing work either detects electrodes that have already been placed (RGB-D detection + registration) or predicts where they should go (MRI or geometric models, usually offline). RoboECG implements the full loop \u2014 localisation \u2192 reach \u2192 press \u2192 self-check \u2192 re-place \u2014 and validates the localisation rules against independently published electrode data instead of against its own assumptions.',
+    ],
+    resultsTitle: 'Results',
+    resultsHead: ['Metric', 'Result'],
+    results: [
+      [
+        'Autonomous placement (depth \u2192 landmark net \u2192 rules \u2192 fusion \u2192 press), 6 electrodes',
+        '6/6 first-attempt success, contact error 0.14\u20130.36 mm, zero safety back-offs',
+      ],
+      [
+        'Target localisation from depth (60 held-out scenes, 360 placements)',
+        '6.08 mm mean (95% CI 5.53\u20136.64), no generation failures',
+      ],
+      [
+        'Robustness over 11 configurations (body size, arm pose, breathing, camera, patient position)',
+        'worst 8.5 mm, mean 5.8 mm \u2014 the same as the nominal scene',
+      ],
+      [
+        'Rule check against 25 statistical-shape torso models (independent)',
+        'V5 lateral position LOO 2.5 mm; intercostal drop regression R\u00b2 = 0.81',
+      ],
+      [
+        'Real-patient check (PhysioNet/CinC 2007, 120 measured electrodes)',
+        'sternal-notch rule \u22123.9 mm; the drop regression is 26.5 mm optimistic (documented)',
+      ],
+    ],
+    demoTitle: 'Demo',
+    demoCaption1:
+      'Autonomous cycle \u2014 the deployed perception path (depth \u2192 learned landmarks \u2192 clinical rules \u2192 fusion \u2192 press \u2192 verify). ~4\u00d7 speed.',
+    demoCaption2:
+      'Per-target reach with the arm parking at V6 (midaxillary line). ~3\u00d7 speed.',
+    pipelineTitle: 'Pipeline',
+    pipeline: [
+      ['Overhead RGB-D', 'one depth frame of the chest, 320\u00d7180'],
+      ['Chest landmarks', 'heatmap U-Net predicts 7 landmarks (clavicles, shoulders, sternum, neck base, pelvis)'],
+      ['Chest frame', 'origin at the clavicle midpoint; up = spine\u2192neck, lateral = sternum axis'],
+      ['Clinical rules', 'SNND + a torso-width drop regression for the 4th\u21925th intercostal level, plus a fitted lateral fraction for V5'],
+      ['Surface fusion', 'depth skin point + local normal where the surface is well seen; model surface at grazing incidence'],
+      ['Press plan', 'TSP ordering, approach / press / hold / retreat with a force and indentation budget'],
+      ['Execution', 'UR3 via Lula IK, frame-by-frame clearance check against patient capsules'],
+      ['Closed loop', 'contact verification after each press; re-place if out of tolerance; visual re-detection of the placed electrodes'],
+    ],
+    validationTitle: 'Validation data',
+    validation: [
+      '<strong>25 statistical-shape torso models</strong> with standard 12-lead electrode positions (Bender et al., Zenodo, CC-BY-4.0). Used to calibrate and check the rules \u2014 this is where a 4.3\u00d7 error in the intercostal drop (a flat 20 mm assumption vs. 86.7 mm measured) was found and fixed.',
+      '<strong>PhysioNet/CinC Challenge 2007 case 3</strong> \u2014 a real patient torso with 120 measured electrode positions (Dalhousie, ODC-By 1.0). The 4th-intercostal rule reproduces the measured V1/V2 level to 3.9 mm.',
+    ],
+    limitsTitle: 'Limitations',
+    limits: [
+      'A single overhead view: V5/V6 sit on a near-vertical wall the camera cannot see; the depth path is usable but not a measurement. A second or wrist camera would remove the problem.',
+      'The drop regression is a population prior, not clinical accuracy \u2014 the one real patient available sits ~27 mm below the prediction.',
+      'Simulation only: the press uses a position controller with an engineering contact model; a real system needs force control (the breathing experiment shows why).',
+    ],
+    citeTitle: 'Citation',
+    citeNote: 'If you use this software, please cite it as:',
+    contactTitle: 'Contact',
+    contact:
+      'Questions, ideas or collaboration: open an issue on GitHub or email me.',
+  },
+  zh: {
+    title: 'RoboECG',
+    intro:
+      '在 Isaac Sim 中让机械臂自主定位并贴放六个 ECG 胸导联（V1–V6）——感知、临床规则定位、按压执行与自检闭环。',
+    tags: ['医疗机器人', '深度感知', '仿真', 'Isaac Sim', 'UR3'],
+    links: { repo: '代码仓库', videos: '演示视频', docs: '技术报告' },
+    overviewTitle: '项目概述',
+    overview: [
+      '机械臂用俯视深度相机感知仰卧患者的胸廓，算出六个胸导联电极应该贴在哪里，逐个按压到皮肤上，最后再自己检查一遍位置——患者躺好之后全程不需要人手介入。',
+      'ECG 电极贴放这件事在公开文献里恰好是空白：现有工作要么"检测已经贴好的电极"（RGB-D 检测 + 配准），要么"预测电极应该贴在哪"（心脏 MRI 或几何模型，通常离线），而"定位 → 到达 → 按压 → 自检 → 重贴"执行闭环始终没有人做。RoboECG 在仿真中补齐了这个闭环，并用**独立公开的电极数据**验证定位规则，而不是拿规则自己的输出当标准答案。',
+    ],
+    resultsTitle: '结果',
+    resultsHead: ['指标', '结果'],
+    results: [
+      [
+        '自主贴放（深度 → landmark 网络 → 临床规则 → 深度融合 → 按压），6 个电极',
+        '6/6 一次成功，接触误差 0.14–0.36 mm，零安全回退',
+      ],
+      [
+        '深度目标定位精度（60 个留出场景、360 次贴放）',
+        '均值 6.08 mm（95% CI 5.53–6.64），无生成失败',
+      ],
+      [
+        '鲁棒性：11 组扰动（体型、手臂姿态、呼吸、相机、患者位置）',
+        '最差 8.5 mm、均值 5.8 mm，与标称场景持平',
+      ],
+      [
+        '规则 vs 25 个统计形状躯干模型（独立真值）',
+        'V5 横向位置留一误差 2.5 mm；肋间落差回归 R² = 0.81',
+      ],
+      [
+        '真实患者核验（PhysioNet/CinC 2007，120 个实测电极）',
+        '胸骨切迹规则 −3.9 mm；落差回归高估 26.5 mm（已记录）',
+      ],
+    ],
+    demoTitle: '演示',
+    demoCaption1:
+      '自主贴放全过程——部署用的感知路径（深度 → 学习式 landmark → 临床规则 → 融合 → 按压 → 自检）。约 4× 速。',
+    demoCaption2: '逐点到达演示，机械臂最终停在 V6（腋中线）。约 3× 速。',
+    pipelineTitle: '技术流程',
+    pipeline: [
+      ['俯视 RGB-D', '胸廓的单帧深度图，320×180'],
+      ['胸部 landmark', '热图 U-Net 预测 7 个 landmark（锁骨、肩、胸骨、颈底、骨盆）'],
+      ['胸廓坐标系', '原点取双侧锁骨中点；up = 脊柱→颈部，lateral = 胸骨轴向'],
+      ['临床规则', 'SNND + 按实测躯干宽度回归的第 4→5 肋间落差；V5 用拟合的横向占比'],
+      ['表面融合', '深度可见处用皮肤点 + 局部法向；掠射处改用模型表面'],
+      ['按压规划', 'TSP 排序，approach / press / hold / retreat，带力与压深预算'],
+      ['执行', 'UR3 经 Lula IK，逐帧对人体碰撞胶囊做间隙校验'],
+      ['闭环', '每次按压后验证接触位置，超差重贴；并用渲染图像重新检测已贴电极'],
+    ],
+    validationTitle: '验证数据',
+    validation: [
+      '<strong>25 个统计形状躯干模型</strong>及其标准 12 导联电极位置（Bender et al., Zenodo, CC-BY-4.0）。用于标定与检查规则——正是它查出了肋间落差 4.3 倍的错误（旧假设固定 20 mm，实测 86.7 mm）。',
+      '<strong>PhysioNet/CinC Challenge 2007 case 3</strong>——真实患者躯干 + 120 个实测电极位置（Dalhousie，ODC-By 1.0）。第 4 肋间规则复现 V1/V2 实测水平到 3.9 mm。',
+    ],
+    limitsTitle: '局限',
+    limits: [
+      '只有一个俯视视角：V5/V6 位于近乎垂直的侧壁，相机看不到；深度路径可用但算不上"测量"。加第二路或腕部相机会直接消除该问题。',
+      '落差回归是人群先验，不是临床精度——唯一能核到的真实患者比预测低约 27 mm。',
+      '仅仿真：按压为位置控制 + 工程接触模型；真机必须力控（呼吸实验已量化原因）。',
+    ],
+    citeTitle: '引用',
+    citeNote: '如果这些工作对你有帮助，欢迎按以下格式引用：',
+    contactTitle: '联系',
+    contact: '问题、想法或合作：提 GitHub issue 或发邮件都可以。',
+  },
+}[lang];
+---
+
+<PageLayout title={L.title} lang={lang} intro={L.intro} description={L.intro}>
+  <p class="tags">{L.tags.map((tag: string) => <span class="tag">{tag}</span>)}</p>
+
+  <p class="links">
+    <a class="btn" href={REPO} target="_blank" rel="noopener">{L.links.repo}</a>
+    <a class="btn secondary" href={VIDEOS} target="_blank" rel="noopener">{L.links.videos}</a>
+    <a class="btn secondary" href={`${REPO}/tree/main/docs`} target="_blank" rel="noopener">
+      {L.links.docs}
+    </a>
+  </p>
+
+  <img
+    class="teaser"
+    src="/roboecg/teaser.png"
+    alt="RoboECG: robot arm on a supine patient and the computed electrode map"
+    width="2400"
+    height="565"
+  />
+
+  <h2>{L.overviewTitle}</h2>
+  {L.overview.map((paragraph: string) => <p set:html={paragraph} />)}
+
+  <h2>{L.resultsTitle}</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>{L.resultsHead.map((head: string) => <th>{head}</th>)}</tr>
+      </thead>
+      <tbody>
+        {L.results.map((row: string[]) => (
+          <tr>
+            <td>{row[0]}</td>
+            <td>{row[1]}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <h2>{L.demoTitle}</h2>
+  <figure>
+    <img src="/roboecg/placement.gif" alt="Autonomous V1-V6 placement cycle" loading="lazy" />
+    <figcaption>{L.demoCaption1}</figcaption>
+  </figure>
+  <figure>
+    <img src="/roboecg/reach.gif" alt="Per-target reach, arm parked at V6" loading="lazy" />
+    <figcaption>{L.demoCaption2}</figcaption>
+  </figure>
+
+  <h2>{L.pipelineTitle}</h2>
+  <ol class="pipeline">
+    {L.pipeline.map((step: string[]) => (
+      <li>
+        <strong>{step[0]}</strong>
+        <span>{step[1]}</span>
+      </li>
+    ))}
+  </ol>
+
+  <h2>{L.validationTitle}</h2>
+  <ul>
+    {L.validation.map((item: string) => <li set:html={item} />)}
+  </ul>
+
+  <h2>{L.limitsTitle}</h2>
+  <ul>
+    {L.limits.map((item: string) => <li>{item}</li>)}
+  </ul>
+
+  <h2>{L.citeTitle}</h2>
+  <p>{L.citeNote}</p>
+  <pre class="bib"><code>{BIB}</code></pre>
+
+  <h2>{L.contactTitle}</h2>
+  <p>
+    {L.contact}
+    <a href={`mailto:${SITE.email}`}>{SITE.email}</a> ·
+    <a href="https://github.com/Jxy-yxJ" target="_blank" rel="noopener">@Jxy-yxJ</a>
+  </p>
+</PageLayout>
+
+<style>
+  .tags {
+    margin-top: -0.5rem;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1.2rem 0 2rem;
+  }
+  .teaser {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin: 1rem 0 2rem;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    margin: 1.2rem 0 2rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  th,
+  td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.65em 0.9em;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    color: var(--text-muted);
+    font-weight: 600;
+    background: var(--bg-subtle);
+    white-space: nowrap;
+  }
+  tbody tr:hover {
+    background: var(--bg-subtle);
+  }
+  figure {
+    margin: 1.5rem 0 2rem;
+  }
+  figure img {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  figcaption {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 0.6em;
+  }
+  .pipeline {
+    counter-reset: step;
+    list-style: none;
+    padding-left: 0;
+  }
+  .pipeline li {
+    position: relative;
+    padding-left: 2.4em;
+    margin: 0.9em 0;
+  }
+  .pipeline li::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0.1em;
+    width: 1.6em;
+    height: 1.6em;
+    display: grid;
+    place-items: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent-strong);
+    background: var(--accent-soft);
+    border-radius: 999px;
+  }
+  .pipeline strong {
+    display: block;
+  }
+  .pipeline span {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+  .bib {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1em 1.2em;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+</style>
