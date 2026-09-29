@@ -12,107 +12,100 @@ const { photos, lang } = Astro.props;
 const t = useTranslations(lang);
 const [hero, ...rest] = photos;
 
-function captionFor(p: CollectionEntry<'photography'>) {
+function plainCaption(p: CollectionEntry<'photography'>) {
   return [
     p.data.title,
-    p.data.location && `📍 ${p.data.location}`,
-    p.data.camera && `📷 ${p.data.camera}`,
-    p.data.date && `🗓 ${p.data.date.toISOString().slice(0, 10)}`,
+    [p.data.location, p.data.camera, p.data.date?.toISOString().slice(0, 10)].filter(Boolean).join(' · '),
     p.data.description,
   ]
     .filter(Boolean)
     .join('<br>');
 }
+const pswpAttrs = (p: CollectionEntry<'photography'>) => ({
+  'data-pswp-width': p.data.width ?? 1600,
+  'data-pswp-height': p.data.height ?? 1067,
+  'data-caption': plainCaption(p),
+});
 ---
 
-{hero && (
-  <section class="ig-hero">
-    <img class="ig-hero-img" src={hero.data.image} alt={hero.data.title} />
-    <div class="ig-hero-veil" aria-hidden="true"></div>
-    <div class="ig-hero-text">
-      <p class="ig-eyebrow">{lang === 'zh' ? '摄影集' : 'Photography'}</p>
-      <h1>{t.photographyTitle}</h1>
-      <p class="ig-hint">{lang === 'zh' ? '下滑浏览 · 点击查看大图与拍摄笔记' : 'Scroll to explore · click for large view & notes'}</p>
-    </div>
-  </section>
-)}
+<div id="pswp-gallery">
+  {hero && (
+    <a class="ig-hero" href={hero.data.image} {...pswpAttrs(hero)}>
+      <img src={hero.data.image} alt={hero.data.title} />
+      <span class="ig-veil" aria-hidden="true"></span>
+      <span class="ig-hero-text">
+        <span class="ig-eyebrow">{lang === 'zh' ? '摄影集' : 'Photography'}</span>
+        <span class="ig-hero-title">{t.photographyTitle}</span>
+        <span class="ig-hint">{lang === 'zh' ? '点击查看大图与拍摄笔记' : 'Click a photo for the full view and field notes'}</span>
+      </span>
+    </a>
+  )}
 
-<section class="ig-stream" id="pswp-gallery">
-  {rest.map((p, i) => (
-    <figure class:list={['ig-panel', { flip: i % 2 === 1 }]} data-reveal>
-      <a
-        class="ig-frame"
-        href={p.data.image}
-        target="_blank"
-        rel="noopener"
-        data-pswp-width={p.data.width ?? 1600}
-        data-pswp-height={p.data.height ?? 1067}
-        data-caption={captionFor(p)}
-      >
-        <img src={p.data.image} alt={p.data.title} loading="lazy" decoding="async" data-parallax="0.07" />
+  <div class="ig-grid">
+    {rest.map((p) => (
+      <a class="ig-item" href={p.data.image} {...pswpAttrs(p)}>
+        <img src={p.data.image} alt={p.data.title} width={p.data.width} height={p.data.height} loading="lazy" decoding="async" />
+        <span class="ig-cap">
+          <span class="ig-title">{p.data.title}</span>
+          <span class="ig-meta">
+            {[p.data.location, p.data.camera].filter(Boolean).join(' · ')}
+            {p.data.date && <span class="ig-date"><FormattedDate date={p.data.date} lang={lang} /></span>}
+          </span>
+        </span>
       </a>
-      <figcaption class="ig-cap">
-        <h3>{p.data.title}</h3>
-        <p class="ig-meta">
-          {p.data.location && <span>📍 {p.data.location}</span>}
-          {p.data.camera && <span>📷 {p.data.camera}</span>}
-          {p.data.date && <span>🗓 <FormattedDate date={p.data.date} lang={lang} /></span>}
-        </p>
-        {p.data.description && <p class="ig-note">{p.data.description}</p>}
-      </figcaption>
-    </figure>
-  ))}
-</section>
+    ))}
+  </div>
+</div>
 
 <script>
   import '../scripts/photoswipe';
-  import '../scripts/parallax';
 </script>
 
 <style>
+  #pswp-gallery { display: block; }
+
   /* ---------- Hero ---------- */
   .ig-hero {
-    position: relative;
-    height: 100svh;
-    margin: calc(-1 * 0px) calc(50% - 50vw) 0;
-    width: 100vw;
-    overflow: hidden;
-    display: flex; align-items: flex-end;
+    position: relative; display: block;
+    width: 100vw; margin-left: calc(50% - 50vw);
+    height: 94svh; overflow: hidden; color: #fff;
   }
-  .ig-hero-img {
-    position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: cover;
-    animation: kenburns 14s var(--ease) forwards;
-  }
-  .ig-hero-veil {
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(14,12,9,0.15) 40%, rgba(14,12,9,0.78) 100%);
-  }
-  .ig-hero-text { position: relative; padding: 0 6vw 7vh; color: #f3ede3; max-width: 60ch; }
-  .ig-eyebrow { margin: 0 0 0.4em; font-size: var(--fs-tiny); letter-spacing: 0.2em; text-transform: uppercase; color: rgba(243,237,227,0.75); }
-  .ig-hero-text h1 { margin: 0 0 0.3em; font-size: clamp(2.4rem, 6vw, 4rem); color: #fff; }
-  .ig-hint { margin: 0; font-size: var(--fs-small); color: rgba(243,237,227,0.8); }
+  .ig-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 8s var(--ease); }
+  .ig-hero:hover img { transform: scale(1.03); }
+  .ig-veil { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,12,14,0.15) 38%, rgba(11,12,14,0.82) 100%); }
+  .ig-hero-text { position: absolute; left: clamp(1.25rem, 6vw, 5rem); right: clamp(1.25rem, 6vw, 5rem); bottom: 9vh; display: flex; flex-direction: column; gap: 0.5rem; }
+  .ig-eyebrow { font-size: 0.72rem; letter-spacing: 0.24em; text-transform: uppercase; color: rgba(243,240,234,0.85); }
+  .ig-hero-title { font-family: var(--font-serif); font-size: clamp(2.4rem, 6vw, 4rem); font-weight: 600; line-height: 1; }
+  .ig-hint { font-size: 0.85rem; color: rgba(243,240,234,0.7); }
 
-  /* ---------- 照片流 ---------- */
-  .ig-stream { display: flex; flex-direction: column; gap: clamp(4rem, 10vh, 8rem); padding: clamp(3rem, 8vh, 6rem) 0; }
-  .ig-panel { display: flex; flex-direction: column; align-items: center; gap: 1.4rem; margin: 0; }
-  .ig-frame {
-    display: flex; align-items: center; justify-content: center;
-    min-height: 60svh; width: 100%;
-    border-radius: var(--radius); overflow: visible;
+  /* ---------- Masonry grid ---------- */
+  .ig-grid {
+    columns: 3 300px;
+    column-gap: 1.3rem;
+    padding: clamp(3rem, 8vh, 6rem) 0;
   }
-  .ig-frame img {
-    max-height: 80svh; width: auto; max-width: 100%;
-    border-radius: var(--radius);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-    will-change: transform;
+  .ig-item {
+    display: block; break-inside: avoid; margin: 0 0 1.6rem;
+    color: #ece9e3;
   }
-  .ig-cap { max-width: 46ch; text-align: center; color: rgba(236,229,219,0.85); }
-  .ig-cap h3 { margin: 0 0 0.4em; color: #fff; font-size: 1.4rem; }
-  .ig-meta { display: flex; flex-wrap: wrap; gap: 0.4em 1.2em; justify-content: center; margin: 0 0 0.6em; font-size: var(--fs-small); color: rgba(236,229,219,0.6); }
-  .ig-note { margin: 0; font-size: var(--fs-body); line-height: 1.7; font-family: var(--font-serif); font-style: italic; }
+  .ig-item img {
+    display: block; width: 100%; height: auto; border-radius: 6px;
+    box-shadow: 0 14px 44px rgba(0,0,0,0.4);
+    transition: transform 0.6s var(--ease), filter 0.3s var(--ease);
+  }
+  .ig-item:hover { text-decoration: none; }
+  .ig-item:hover img { transform: translateY(-2px); filter: brightness(1.04); }
+  .ig-cap { display: flex; flex-direction: column; gap: 0.25rem; margin-top: 0.7rem; }
+  .ig-title { font-family: var(--font-serif); font-size: 1rem; color: #fff; transition: color 0.2s var(--ease); }
+  .ig-item:hover .ig-title { color: var(--accent); }
+  .ig-meta {
+    display: flex; flex-wrap: wrap; gap: 0.2rem 0.8rem;
+    font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase;
+    color: rgba(236,233,227,0.55);
+  }
+  .ig-date { font-variant-numeric: tabular-nums; }
 
   @media (prefers-reduced-motion: reduce) {
-    .ig-hero-img { animation: none; }
+    .ig-hero img, .ig-item img { transition: none; }
   }
 </style>
