@@ -11,7 +11,7 @@ highlights:
   - 6/6 first-attempt success; contact error 0.14–0.36 mm
   - Target localisation 6.08 mm mean over 360 held-out placements (95% CI 5.53–6.64)
   - Rules validated against two independent public electrode datasets
-cover: /roboecg/cover.png
+cover: /projects/roboecg.webp
 order: 0
 ---
 

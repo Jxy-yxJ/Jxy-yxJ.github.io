@@ -10,6 +10,7 @@ links:
 highlights:
   - 与检测器无关的「核验 → 更新 → 行动」闭环，重访预算有界
   - '关键发现：强视觉语言模型能 6/6 检测出过期，但只有 3/6 做出正确的更新决策——检测不等于维护'
+cover: /projects/memoryguard.webp
 order: 2
 ---
 

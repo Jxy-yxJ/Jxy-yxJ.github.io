@@ -10,6 +10,7 @@ links:
 highlights:
   - Detector-agnostic verify → update → act loop under a bounded revisit budget
   - 'Key finding: a strong vision-language model detects staleness 6/6 but makes the correct update only 3/6 — detection is not maintenance'
+cover: /projects/memoryguard.webp
 order: 2
 ---
 

@@ -5,6 +5,6 @@ field: Robotics & Machine Learning
 period: 2023 – 2027
 details:
   - 'Relevant coursework: Robotics, Machine Learning, Computer Vision, Optimization'
-  - 'Focus: robotic perception and manipulation in simulation'
+  - 'Focus: embodied AI and robot learning'
 order: 0
 ---

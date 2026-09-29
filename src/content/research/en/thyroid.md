@@ -11,6 +11,7 @@ highlights:
   - 0.70 mm end-effector reach error with ≥ 2.26 cm guaranteed robot-to-body clearance
   - Depth fusion improves target localization 25% (6.23 → 4.67 cm) across 7 camera/pose perturbations
   - 40 simulator-free unit tests in CI, plus documented approximations and failure analysis
+cover: /projects/thyroid.webp
 order: 1
 ---
 

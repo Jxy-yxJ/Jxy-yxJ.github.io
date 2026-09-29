@@ -87,16 +87,23 @@ const aboutLead =
       <div class="proj-list">
         {projects.map((p) => (
           <article class="proj">
-            <h3>{p.data.title}</h3>
-            <p class="proj-meta">{p.data.role} · {p.data.period}</p>
-            <p class="proj-sum">{p.data.summary}</p>
-            <div class="proj-foot">
-              {p.data.tags.map((tag) => <span class="tag">{tag}</span>)}
-              <span class="proj-links">
-                {p.data.links.code && <a href={p.data.links.code} target="_blank" rel="noopener">Code</a>}
-                {p.data.links.paper && <a href={p.data.links.paper} target="_blank" rel="noopener">Paper</a>}
-                {p.data.links.demo && <a href={p.data.links.demo} target="_blank" rel="noopener">Demo</a>}
-              </span>
+            {p.data.cover && (
+              <a class="proj-cover" href={p.data.links.page ?? p.data.links.code}>
+                <img src={p.data.cover} alt="" loading="lazy" />
+              </a>
+            )}
+            <div class="proj-body">
+              <h3>{p.data.title}</h3>
+              <p class="proj-meta">{p.data.role} · {p.data.period}</p>
+              <p class="proj-sum">{p.data.summary}</p>
+              <div class="proj-foot">
+                {p.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+                <span class="proj-links">
+                  {p.data.links.code && <a href={p.data.links.code} target="_blank" rel="noopener">Code</a>}
+                  {p.data.links.paper && <a href={p.data.links.paper} target="_blank" rel="noopener">Paper</a>}
+                  {p.data.links.demo && <a href={p.data.links.demo} target="_blank" rel="noopener">Demo</a>}
+                </span>
+              </div>
             </div>
           </article>
         ))}
@@ -209,10 +216,14 @@ const aboutLead =
   @media (max-width: 900px) { .home-layout { grid-template-columns: 1fr; gap: 1.5rem; } }
 
   /* ---------- Projects ---------- */
-  .proj-list { display: grid; gap: 1rem; margin-bottom: 1.2rem; }
-  .proj { padding: 1.1rem 1.2rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elevated); transition: border-color 0.2s var(--ease), transform 0.2s var(--ease); }
-  .proj:hover { border-color: var(--accent); transform: translateY(-2px); }
-  .proj h3 { margin: 0 0 0.15em; font-size: 1.15rem; }
+  .proj-list { display: grid; gap: 1.2rem; margin-bottom: 1.4rem; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+  .proj { display: flex; flex-direction: column; overflow: hidden; padding: 0; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elevated); transition: border-color 0.2s var(--ease), transform 0.2s var(--ease), box-shadow 0.2s var(--ease); }
+  .proj:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); transform: translateY(-2px); box-shadow: var(--shadow); }
+  .proj-cover { display: block; }
+  .proj-cover img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; transition: transform 0.5s var(--ease); }
+  .proj:hover .proj-cover img { transform: scale(1.02); }
+  .proj-body { display: flex; flex-direction: column; padding: 1.1rem 1.2rem; flex: 1; }
+  .proj h3 { margin: 0 0 0.3em; font-size: 1.15rem; }
   .proj-meta { margin: 0 0 0.4em; font-size: var(--fs-small); color: var(--text-faint); }
   .proj-sum { margin: 0 0 0.6em; color: var(--text-muted); font-size: var(--fs-small); }
   .proj-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1rem; }

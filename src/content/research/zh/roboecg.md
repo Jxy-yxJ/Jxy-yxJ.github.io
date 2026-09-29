@@ -11,7 +11,7 @@ highlights:
   - 一次成功率 6/6；接触误差 0.14–0.36 mm
   - 深度目标定位 360 次留出贴放均值 6.08 mm（95% CI 5.53–6.64）
   - 定位规则经两个独立公开电极数据集验证
-cover: /roboecg/cover.png
+cover: /projects/roboecg.webp
 order: 0
 ---
 

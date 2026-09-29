@@ -48,7 +48,7 @@
   --space-6: 6rem;
 
   --maxw: 72ch;
-  --maxw-wide: 1120px;
+  --maxw-wide: 1340px;
   --radius: 9px;
   --radius-sm: 6px;
   --shadow: 0 1px 1px rgba(33, 28, 23, 0.04), 0 6px 16px rgba(33, 28, 23, 0.05);
@@ -134,7 +134,7 @@ code, pre { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monosp
 /* ============================================================
    布局工具
    ============================================================ */
-.container { width: 100%; max-width: var(--maxw-wide); margin-inline: auto; padding-inline: 1.5rem; }
+.container { width: 100%; max-width: var(--maxw-wide); margin-inline: auto; padding-inline: clamp(1.25rem, 4vw, 2.75rem); }
 
 .prose { max-width: var(--maxw); font-size: var(--fs-body); }
 .prose p { margin: 1.1em 0; }
