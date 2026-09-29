@@ -1,0 +1,56 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { SITE } from '../consts';
+import { useTranslations } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const zh = lang === 'zh';
+const t = useTranslations(lang);
+---
+
+<aside class="quicklook">
+  <div class="block">
+    <p class="k">{zh ? '所在地' : 'Based in'}</p>
+    <p class="v">{zh ? '中国 · 杭州' : 'Hangzhou, China'}</p>
+  </div>
+  <div class="block">
+    <p class="k">{zh ? '方向' : 'Focus'}</p>
+    <p class="v">{zh ? '机器人学习与持续适应' : 'Robot learning & continual adaptation'}</p>
+  </div>
+  <div class="block">
+    <p class="k">{zh ? '在读' : 'Currently'}</p>
+    <p class="v">{zh ? '杭州电子科技大学 · 智能科学与技术（2023–2027）' : 'B.S. Intelligent Science & Technology, HDU (2023–2027)'}</p>
+  </div>
+  <div class="block">
+    <p class="k">{zh ? '联系' : 'Contact'}</p>
+    <p class="v links">
+      <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      <a href={SITE.social.github} target="_blank" rel="noopener">GitHub</a>
+      <a href={SITE.social.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+      <a href={getRelativeLocaleUrl(lang, 'cv')}>{t.cvTitle}</a>
+    </p>
+  </div>
+</aside>
+
+<style>
+  .quicklook { position: sticky; top: 5.2rem; display: grid; gap: 1.5rem; align-content: start; }
+  .block .k {
+    margin: 0 0 0.35rem; font-size: 0.7rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--text-faint);
+  }
+  .block .v { margin: 0; font-size: 0.95rem; color: var(--text); line-height: 1.5; }
+  .links { display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; }
+  .links a { color: var(--text-muted); font-size: 0.9rem; }
+  .links a:hover { color: var(--accent); }
+
+  @media (max-width: 900px) {
+    .quicklook { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem 1.5rem; }
+  }
+  @media (max-width: 520px) {
+    .quicklook { grid-template-columns: 1fr; }
+  }
+</style>

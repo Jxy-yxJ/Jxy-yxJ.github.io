@@ -1,5 +1,6 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
+import QuickLook from '../../components/QuickLook.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 import { getCollection } from 'astro:content';
 import { SITE } from '../../consts';
@@ -24,68 +25,50 @@ const projects = (await getCollection('research'))
 
 const focus = zh
   ? [
-      ['机器人感知与操作', 'RGB-D、姿态/深度、运动规划'],
-      ['医疗机器人', '带安全约束的自主任务执行'],
-      ['具身智能体', '记忆、核验与评估'],
-      ['仿真到现实', '面向操作与移动机器人的迁移'],
+      ['经验驱动的机器人学习', '记忆增强策略、经验回放'],
+      ['持续 / 终身学习', '学习新任务而不遗忘旧能力'],
+      ['部署后的在线适应', '对新物体、新环境、新动力学的少样本适应'],
+      ['神经启发的机器人学习', '记忆、可塑性与感知运动学习'],
     ]
   : [
-      ['Robotic perception & manipulation', 'RGB-D, pose/depth, motion planning'],
-      ['Medical robotics', 'autonomous task execution under safety constraints'],
-      ['Embodied agents', 'memory, verification, and evaluation'],
-      ['Sim-to-real', 'transfer for manipulation and mobile robots'],
+      ['Experience-driven robot learning', 'memory-augmented policies, experience replay'],
+      ['Continual & lifelong learning', 'adapting to new tasks without forgetting'],
+      ['Post-deployment online adaptation', 'few-shot adaptation to new objects, environments, and dynamics'],
+      ['Neuroscience-inspired learning', 'memory, plasticity, and sensorimotor learning'],
     ];
+
+const focusNote = zh
+  ? 'VLA、世界模型与强化学习，是我实现这一目标的技术路线，而非目标本身。'
+  : 'VLA, world models, and reinforcement learning are the technical routes I use toward this goal — not the goal itself.';
 
 const skillGroups = zh
   ? [
       ['编程', 'Python · Git / GitHub Actions · Linux'],
-      ['机器人与仿真', 'NVIDIA Isaac Sim · AI2-THOR · UR3 + Lula IK'],
-      ['感知与机器学习', 'RGB-D · MediaPipe · OpenCV · PyTorch · Transformers · NumPy'],
+      ['机器人学习与仿真', 'NVIDIA Isaac Sim · AI2-THOR · UR3 + Lula IK · PyTorch'],
+      ['感知与学习', 'RGB-D · MediaPipe · OpenCV · Transformers · NumPy'],
       ['Web', 'Astro · TypeScript'],
     ]
   : [
       ['Programming', 'Python · Git / GitHub Actions · Linux'],
-      ['Robotics & simulation', 'NVIDIA Isaac Sim · AI2-THOR · UR3 + Lula IK'],
-      ['Perception & ML', 'RGB-D · MediaPipe · OpenCV · PyTorch · Transformers · NumPy'],
+      ['Robot learning & simulation', 'NVIDIA Isaac Sim · AI2-THOR · UR3 + Lula IK · PyTorch'],
+      ['Perception & learning', 'RGB-D · MediaPipe · OpenCV · Transformers · NumPy'],
       ['Web', 'Astro · TypeScript'],
     ];
 
 const lead = zh
-  ? '我是江鑫宇，一名本科生，方向是具身智能——让机器能够感知、推理并在真实世界中行动。我目前的工作是仿真中的医疗操作：从 RGB-D 感知患者、定位临床目标，并规划机器人能安全执行、带碰撞约束的运动。'
-  : 'I’m Xinyu Jiang, an undergraduate working toward embodied AI — teaching machines to perceive, reason, and act in the physical world. My current work is medical manipulation in simulation: perceiving a patient from RGB-D data, localizing a clinical target, and planning collision-aware motion a robot can execute safely.';
+  ? '我是江鑫宇，一名本科生，方向是机器人学习。我关注机器人如何通过与真实环境交互积累经验，并借助记忆、可塑性与持续学习机制，在部署之后不断适应新的环境、物体与任务。目前我把这一方向应用于仿真中的医疗操作：RGB-D 感知、临床目标定位与带碰撞约束的运动规划。'
+  : 'I’m Xinyu Jiang, an undergraduate working on robot learning. I study how robots accumulate experience through interaction and keep adapting — through memory, plasticity, and continual learning — to new environments, objects, and tasks after deployment. My current work applies this to medical manipulation in simulation: RGB-D perception, clinical-target localization, and collision-aware motion.';
 ---
 
 <PageLayout title={t.aboutTitle} lang={lang} wide description={zh ? SITE.taglineZh : SITE.taglineEn}>
   <div class="about-layout">
-    <aside class="about-aside">
-      <div class="aside-block">
-        <p class="k">{zh ? '所在地' : 'Based in'}</p>
-        <p class="v">{zh ? '中国 · 杭州' : 'Hangzhou, China'}</p>
-      </div>
-      <div class="aside-block">
-        <p class="k">{zh ? '方向' : 'Focus'}</p>
-        <p class="v">{zh ? '机器人感知与操作' : 'Robotic perception & manipulation'}</p>
-      </div>
-      <div class="aside-block">
-        <p class="k">{zh ? '在读' : 'Currently'}</p>
-        <p class="v">{zh ? '杭州电子科技大学 · 智能科学与技术（2023–2027）' : 'B.S. Intelligent Science & Technology, HDU (2023–2027)'}</p>
-      </div>
-      <div class="aside-block">
-        <p class="k">{zh ? '联系' : 'Contact'}</p>
-        <p class="v aside-links">
-          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
-          <a href={SITE.social.github} target="_blank" rel="noopener">GitHub</a>
-          <a href={SITE.social.linkedin} target="_blank" rel="noopener">LinkedIn</a>
-          <a href={getRelativeLocaleUrl(lang, 'cv')}>CV</a>
-        </p>
-      </div>
-    </aside>
+    <QuickLook lang={lang} />
 
     <div class="about-main">
       <p class="about-lead">{lead}</p>
 
       <section class="sec">
-        <div class="sec-head"><span class="sec-idx">01</span><h2 class="sec-title">{zh ? '研究兴趣' : 'Focus'}</h2></div>
+        <div class="sec-head"><span class="sec-idx">01</span><h2 class="sec-title">{zh ? '研究兴趣' : 'Research interests'}</h2></div>
         <ul class="focus-list">
           {focus.map(([title, desc], i) => (
             <li>
@@ -94,6 +77,7 @@ const lead = zh
             </li>
           ))}
         </ul>
+        <p class="sec-note">{focusNote}</p>
       </section>
 
       <section class="sec">
@@ -162,33 +146,20 @@ const lead = zh
 </PageLayout>
 
 <style>
-  .about-layout {
-    display: grid;
-    grid-template-columns: 15.5rem minmax(0, 1fr);
-    gap: 4.5rem;
-    align-items: start;
-  }
-  .about-aside { position: sticky; top: 5.2rem; display: grid; gap: 1.5rem; }
-  .aside-block .k {
-    margin: 0 0 0.35rem; font-size: 0.7rem; letter-spacing: 0.16em;
-    text-transform: uppercase; color: var(--text-faint);
-  }
-  .aside-block .v { margin: 0; font-size: 0.95rem; color: var(--text); line-height: 1.5; }
-  .aside-links { display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; }
-  .aside-links a { color: var(--text-muted); font-size: 0.9rem; }
-  .aside-links a:hover { color: var(--accent); }
+  .about-layout { display: grid; grid-template-columns: 15.5rem minmax(0, 1fr); gap: 4.5rem; align-items: start; }
 
   .about-lead {
     font-family: var(--font-serif);
     font-size: clamp(1.3rem, 2.5vw, 1.75rem);
     line-height: 1.5; letter-spacing: -0.012em;
-    margin: 0 0 3rem; max-width: 46ch; color: var(--text);
+    margin: 0 0 3rem; max-width: 48ch; color: var(--text);
   }
 
   .sec { padding: 2.3rem 0; border-top: 1px solid var(--hairline); }
   .sec-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.3rem; }
   .sec-idx { font-size: 0.8rem; color: var(--accent); font-variant-numeric: tabular-nums; }
   .sec-title { margin: 0; font-size: clamp(1.3rem, 2.2vw, 1.55rem); }
+  .sec-note { margin: 1.4rem 0 0; color: var(--text-faint); font-size: 0.92rem; font-style: italic; max-width: 60ch; }
 
   .focus-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.85rem; }
   .focus-list li { display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: 1rem; align-items: baseline; }
@@ -219,7 +190,7 @@ const lead = zh
   .work-arrow { grid-area: arrow; align-self: center; color: var(--accent); transition: transform 0.2s var(--ease); }
   .text-link { font-weight: 600; font-size: 0.85rem; }
 
-  .skills { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 0.8rem 1.5rem; margin: 0; }
+  .skills { display: grid; grid-template-columns: 12rem minmax(0, 1fr); gap: 0.8rem 1.5rem; margin: 0; }
   .skills dt { color: var(--text-faint); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; }
   .skills dd { margin: 0; color: var(--text-muted); }
 
@@ -238,13 +209,11 @@ const lead = zh
 
   @media (max-width: 900px) {
     .about-layout { grid-template-columns: 1fr; gap: 2.5rem; }
-    .about-aside { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem 1.5rem; }
     .skills { grid-template-columns: 1fr; gap: 0.2rem 0; }
     .skills dt { margin-top: 0.8rem; }
     .beyond { grid-template-columns: 1fr; }
   }
   @media (max-width: 520px) {
-    .about-aside { grid-template-columns: 1fr; }
     .work { grid-template-areas: 'title arrow'; }
     .work-metric { display: none; }
   }

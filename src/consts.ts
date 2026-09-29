@@ -5,20 +5,20 @@ export const SITE = {
   authorZh: '江鑫宇',
 
   // 角色（hero 眉标、SEO）
-  roleEn: 'Robotics & Embodied AI',
-  roleZh: '机器人与具身智能',
+  roleEn: 'Robot Learning · Embodied AI',
+  roleZh: '机器人学习 · 具身智能',
 
   // 题记
   epigraph: 'Do not go gentle into that good night.',
   epigraphZh: '不要温和地走进那个良夜。',
 
   // 身份副标题（hero 下方一行）
-  identityEn: 'Robotics & Embodied AI · Photographer · Drummer of Chocland.doc',
-  identityZh: '机器人与具身智能 · 摄影 · 巧克力文件岛鼓手',
+  identityEn: 'Robot Learning · Embodied AI · Photographer · Drummer of Chocland.doc',
+  identityZh: '机器人学习与具身智能 · 摄影 · 巧克力文件岛鼓手',
 
   // for about page description / SEO
-  taglineEn: 'Robotics & Embodied AI — perception, manipulation, and sim-to-real.',
-  taglineZh: '机器人 / 具身智能 —— 感知、操作与 sim-to-real。',
+  taglineEn: 'Robot learning and embodied AI — continual adaptation, memory, and experience-driven learning.',
+  taglineZh: '机器人学习与具身智能 —— 持续适应、记忆与经验驱动学习。',
 
   // 乐队
   band: {

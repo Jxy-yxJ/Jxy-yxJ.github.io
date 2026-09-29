@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import HomeSection from '../../components/home/HomeSection.astro';
+import QuickLook from '../../components/QuickLook.astro';
 import TimelineItem from '../../components/home/TimelineItem.astro';
 import RobotScene from '../../components/RobotScene.astro';
 import { getCollection } from 'astro:content';
@@ -29,8 +30,8 @@ const latestNote = (await getCollection('notes'))
 const tagline = lang === 'zh' ? SITE.taglineZh : SITE.taglineEn;
 const aboutLead =
   lang === 'zh'
-    ? '我是江鑫宇，一名本科生，研究方向是具身智能——教机器人感知并在真实世界中行动。我也用相机记录它们生活的世界，并在独立乐队「巧克力文件岛」里打鼓。'
-    : 'I’m Xinyu Jiang, an undergraduate working toward embodied AI — teaching robots to perceive and act in the real world. I also photograph the world they live in, and play drums in the indie band 巧克力文件岛.';
+    ? '我研究机器人学习——机器人如何通过交互积累经验，并借助记忆、可塑性与持续学习，持续适应新的环境、物体与任务。我也摄影，并在独立乐队「巧克力文件岛」打鼓。'
+    : 'I work on robot learning — how robots accumulate experience through interaction and keep adapting to new environments, objects, and tasks through memory, plasticity, and continual learning. I also photograph and play drums in the indie band Chocland.doc.';
 ---
 
 <BaseLayout title={`${lang === 'zh' ? SITE.authorZh : SITE.author} · ${tagline}`} description={tagline} lang={lang}>
@@ -62,6 +63,9 @@ const aboutLead =
     </div>
   </section>
 
+  <div class="home-layout">
+  <QuickLook lang={lang} />
+  <div class="home-main">
   <!-- ============ 01 About ============ -->
   <HomeSection index="01" title={t.sections.about} id="about">
     <p class="about-lead">{aboutLead}</p>
@@ -126,6 +130,8 @@ const aboutLead =
       )}
     </div>
   </HomeSection>
+  </div>
+  </div>
 </BaseLayout>
 
 <style>
@@ -196,6 +202,11 @@ const aboutLead =
   /* ---------- About ---------- */
   .about-lead { font-size: var(--fs-lead); max-width: 62ch; margin: 0 0 0.8em; }
   .text-link { font-weight: 600; font-size: var(--fs-small); }
+
+  /* ---------- Home layout with quick-look rail ---------- */
+  .home-layout { display: grid; grid-template-columns: 14rem minmax(0, 1fr); gap: 3.5rem; align-items: start; padding-top: 1.2rem; }
+  .home-main { min-width: 0; }
+  @media (max-width: 900px) { .home-layout { grid-template-columns: 1fr; gap: 1.5rem; } }
 
   /* ---------- Projects ---------- */
   .proj-list { display: grid; gap: 1rem; margin-bottom: 1.2rem; }
