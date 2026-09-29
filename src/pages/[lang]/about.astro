@@ -22,60 +22,73 @@ const t = useTranslations(lang);
   {lang === 'en' ? (
     <>
       <p>
-        I’m <strong>{SITE.author}</strong>, a student and builder working toward
+        I’m <strong>{SITE.author}</strong>, an undergraduate working toward
         <strong> embodied AI</strong> — the intersection of <strong>robotics, computer vision,
         and machine learning</strong> where machines perceive, reason, and act in the physical world.
+        My current work is medical manipulation in simulation: perceiving a patient from RGB-D data,
+        localizing a clinical target, and planning collision-aware motion that a robot can execute safely.
       </p>
       <h2>Research interests</h2>
       <ul>
-        <li>Visuomotor policy learning & imitation learning for manipulation</li>
-        <li>Sim-to-real transfer and world models for robots</li>
-        <li>Multimodal perception (vision + language + touch)</li>
-        <li>Humanoid & mobile manipulation systems</li>
+        <li>Robotic perception and manipulation (RGB-D, pose/depth, motion planning)</li>
+        <li>Medical robotics and autonomous task execution</li>
+        <li>Embodied agents: memory, verification, and evaluation</li>
+        <li>Sim-to-real transfer for manipulation and mobile robots</li>
       </ul>
       <h2>Why this site</h2>
       <p>
         This site is my public notebook: research updates, learning progress, and the
-        photography &amp; music that keep me curious. It’s also part of my application
-        portfolio for graduate study in the US.
+        photography &amp; music that keep me curious. It is also part of my portfolio
+        for graduate study and research positions.
       </p>
       <h2>Education &amp; background</h2>
-      <p>Replace this with your degree, institution, and key coursework. (Edit in <code>src/pages/[lang]/about.astro</code> or via the CMS.)</p>
+      <p>
+        B.S. in <strong>Intelligent Science and Technology</strong>, Hangzhou Dianzi University
+        (2023 – 2027). Focus on robotics, computer vision, machine learning, and optimization,
+        with applied work in robotic perception and manipulation in simulation.
+      </p>
       <h2>Selected skills</h2>
       <p>
         <span class="tag">Python</span><span class="tag">PyTorch</span>
-        <span class="tag">ROS 2</span><span class="tag">C++</span>
-        <span class="tag">CUDA</span><span class="tag">Diffusion Models</span>
-        <span class="tag">Transformer</span>
+        <span class="tag">NVIDIA Isaac Sim</span><span class="tag">AI2-THOR</span>
+        <span class="tag">UR3 / Lula IK</span><span class="tag">RGB-D</span>
+        <span class="tag">MediaPipe</span><span class="tag">OpenCV</span>
+        <span class="tag">Transformers</span><span class="tag">Git / CI</span>
       </p>
     </>
   ) : (
     <>
       <p>
-        我是 <strong>{SITE.author}</strong>，一名学生与开发者，研究方向是
+        我是 <strong>{SITE.author}</strong>，一名本科生，方向是
         <strong>具身智能（Embodied AI）</strong>——它站在
         <strong>机器人、计算机视觉与机器学习</strong>的交叉点，让机器能够感知、推理并在真实世界中行动。
+        我目前的工作是仿真中的医疗操作：从 RGB-D 感知患者、定位临床目标，并规划机器人能安全执行、
+        带碰撞约束的运动。
       </p>
       <h2>研究兴趣</h2>
       <ul>
-        <li>面向操作的视觉运动策略学习与模仿学习</li>
-        <li>仿真到现实的迁移（Sim-to-real）与机器人世界模型</li>
-        <li>多模态感知（视觉 + 语言 + 触觉）</li>
-        <li>人形机器人与移动操作系统的搭建</li>
+        <li>机器人感知与操作（RGB-D、姿态/深度、运动规划）</li>
+        <li>医疗机器人与自主任务执行</li>
+        <li>具身智能体：记忆、核验与评估</li>
+        <li>面向操作与移动机器人的仿真到现实迁移</li>
       </ul>
       <h2>为什么做这个站点</h2>
       <p>
         这个站点是我的公开笔记：科研进展、学习记录，以及让我保持好奇心的摄影与音乐。
-        它同时也是我申请美国研究生用的作品集的一部分。
+        它同时也是我申请研究生与科研岗位的作品集的一部分。
       </p>
       <h2>教育背景</h2>
-      <p>在这里填写你的学位、院校与核心课程。（可在 <code>src/pages/[lang]/about.astro</code> 或通过后台 CMS 编辑。）</p>
+      <p>
+        杭州电子科技大学 <strong>智能科学与技术</strong> 本科（2023 – 2027）。
+        方向为机器人学、计算机视觉、机器学习与最优化，并在仿真中开展机器人感知与操作的实践。
+      </p>
       <h2>主要技能</h2>
       <p>
         <span class="tag">Python</span><span class="tag">PyTorch</span>
-        <span class="tag">ROS 2</span><span class="tag">C++</span>
-        <span class="tag">CUDA</span><span class="tag">扩散模型</span>
-        <span class="tag">Transformer</span>
+        <span class="tag">NVIDIA Isaac Sim</span><span class="tag">AI2-THOR</span>
+        <span class="tag">UR3 / Lula IK</span><span class="tag">RGB-D</span>
+        <span class="tag">MediaPipe</span><span class="tag">OpenCV</span>
+        <span class="tag">Transformers</span><span class="tag">Git / CI</span>
       </p>
     </>
   )}

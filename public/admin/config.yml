@@ -4,8 +4,8 @@
 
 backend:
   name: github
-  repo: yourname/yourname.github.io   # ← 改成 owner/repo
-  base_url: https://your-oauth-callback.pages.dev   # ← 改成你的 OAuth 回调地址
+  repo: Jxy-yxJ/Jxy-yxJ.github.io   # owner/repo
+  base_url: https://your-oauth-callback.pages.dev   # ← 改成你的 OAuth 回调地址（部署 Decap OAuth worker 后填入）
   auth_scope: repo
 
 # Decap 原生 i18n：自动管理 en/ zh 子目录与语言标签

@@ -2,7 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import HomeSection from '../../components/home/HomeSection.astro';
 import TimelineItem from '../../components/home/TimelineItem.astro';
-import PubItem from '../../components/home/PubItem.astro';
 import RobotScene from '../../components/RobotScene.astro';
 import { getCollection } from 'astro:content';
 import { getRelativeLocaleUrl } from 'astro:i18n';
@@ -21,9 +20,6 @@ const byOrder = (a: any, b: any) => a.data.order - b.data.order;
 const inLang = (id: string) => id.startsWith(lang + '/');
 
 const education = (await getCollection('education')).filter((i) => inLang(i.id)).sort(byOrder);
-const experience = (await getCollection('experience')).filter((i) => inLang(i.id)).sort(byOrder);
-const publications = (await getCollection('publications')).filter((i) => inLang(i.id)).sort(byOrder);
-const awards = (await getCollection('awards')).filter((i) => inLang(i.id)).sort(byOrder);
 const projects = (await getCollection('research')).filter((i) => inLang(i.id)).sort(byOrder).slice(0, 3);
 const cover = (await getCollection('photography')).filter((p) => inLang(p.id) && p.data.cover).sort(byOrder)[0];
 const latestNote = (await getCollection('notes'))
@@ -80,24 +76,9 @@ const aboutLead =
     </HomeSection>
   )}
 
-  <!-- ============ 03 Experience ============ -->
-  {experience.length > 0 && (
-    <HomeSection index="03" title={t.sections.experience} id="experience">
-      {experience.map((e) => (
-        <TimelineItem
-          period={e.data.period}
-          title={e.data.role}
-          subtitle={e.data.org}
-          meta={e.data.advisor ? (lang === 'zh' ? `导师：${e.data.advisor}` : `Advisor: ${e.data.advisor}`) : undefined}
-          details={e.data.details}
-        />
-      ))}
-    </HomeSection>
-  )}
-
-  <!-- ============ 04 Projects ============ -->
+  <!-- ============ 03 Projects ============ -->
   {projects.length > 0 && (
-    <HomeSection index="04" title={t.sections.projects} id="projects">
+    <HomeSection index="03" title={t.sections.projects} id="projects">
       <div class="proj-list">
         {projects.map((p) => (
           <article class="proj">
@@ -119,32 +100,8 @@ const aboutLead =
     </HomeSection>
   )}
 
-  <!-- ============ 05 Publications ============ -->
-  {publications.length > 0 && (
-    <HomeSection index="05" title={t.sections.publications} id="publications">
-      {publications.map((p) => (
-        <PubItem title={p.data.title} authors={p.data.authors} venue={p.data.venue} year={p.data.year} link={p.data.links.paper} />
-      ))}
-    </HomeSection>
-  )}
-
-  <!-- ============ 06 Awards ============ -->
-  {awards.length > 0 && (
-    <HomeSection index="06" title={t.sections.awards} id="awards">
-      <ul class="awards">
-        {awards.map((a) => (
-          <li>
-            <span class="award-year">{a.data.year}</span>
-            <strong>{a.data.title}</strong>
-            {a.data.org && <span class="award-org"> · {a.data.org}</span>}
-          </li>
-        ))}
-      </ul>
-    </HomeSection>
-  )}
-
-  <!-- ============ 07 Beyond work ============ -->
-  <HomeSection index="07" title={t.sections.beyond} id="beyond">
+  <!-- ============ 04 Beyond work ============ -->
+  <HomeSection index="04" title={t.sections.beyond} id="beyond">
     <div class="beyond-grid">
       <a class="beyond-card" href={getRelativeLocaleUrl(lang, 'photography')}>
         {cover && <img src={cover.data.image} alt={cover.data.title} loading="lazy" />}
