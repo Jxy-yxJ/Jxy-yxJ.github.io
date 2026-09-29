@@ -1,7 +1,8 @@
 ---
-title: D 小调钢琴即兴
-artist: 江鑫宇
-embed: https://www.youtube.com/watch?v=dQw4w9WgXcQ
-note: 一个深夜的即兴。在琴房的立式钢琴上录下。
+title: Chocland.doc 在 Spotify
+type: track
+artist: 巧克力文件岛
+embed: https://open.spotify.com/artist/77vR4tJSZ0eBNwmm5nTxLu
+note: 我们在 Spotify 上的作品——想快速了解我们的声音，从这里开始。
 order: 0
 ---

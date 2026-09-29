@@ -14,88 +14,70 @@ export const getStaticPaths = () => [
 ];
 const { lang } = Astro.params as { lang: Lang };
 const t = useTranslations(lang);
+const zh = lang === 'zh';
 
 const items = (await getCollection('music'))
   .filter((i) => i.id.startsWith(lang + '/'))
   .sort((a, b) => a.data.order - b.data.order);
 
 const embeds = items.filter((i) => i.data.embed);
-const audioTracks = items
-  .filter((i) => i.data.audio)
-  .map((i) => ({ title: i.data.title, src: i.data.audio as string, note: i.data.note }));
+const audioTracks = items.filter((i) => i.data.audio).map((i) => ({ title: i.data.title, src: i.data.audio as string, note: i.data.note }));
 const gigs = items.filter((i) => i.data.type === 'gig');
 const notes = items.filter((i) => i.data.type === 'note');
 
-const members =
-  lang === 'zh'
-    ? [
-        { name: SITE.authorZh, role: '鼓手', me: true },
-        { name: '主唱', role: 'Vocals', me: false },
-        { name: '吉他', role: 'Guitar', me: false },
-        { name: '贝斯', role: 'Bass', me: false },
-        { name: '合成器', role: 'Keys', me: false },
-      ]
-    : [
-        { name: SITE.author, role: 'Drums', me: true },
-        { name: 'Vocals', role: '—', me: false },
-        { name: 'Guitar', role: '—', me: false },
-        { name: 'Bass', role: '—', me: false },
-        { name: 'Keys / Synth', role: '—', me: false },
-      ];
+const streams = [
+  { label: 'NetEase Music', href: SITE.band.netease },
+  { label: 'Spotify', href: SITE.band.spotify },
+];
 
-const about =
-  lang === 'zh'
-    ? '「巧克力文件岛」是一支独立乐队。我们在鼓点、噪音与旋律之间寻找平衡——把深夜的即兴、排练室的争论和舞台上的汗水，都写成歌。我是鼓手江鑫宇。'
-    : '巧克力文件岛 is an indie band. We chase the balance between groove, noise and melody — turning late-night improvisations, rehearsal-room debates and on-stage sweat into songs. I play the drums.';
+const about = zh
+  ? '「巧克力文件岛」是一支独立乐队，我是鼓手。我们在鼓点、噪音与旋律之间寻找平衡——把深夜的即兴、排练室的争论和舞台上的汗水，写成歌。'
+  : 'Chocland.doc is an indie band. I play the drums. We chase the balance between groove, noise, and melody — turning late-night improvisations, rehearsal-room arguments, and on-stage sweat into songs.';
 ---
 
-<BaseLayout title={`${SITE.band.name} · ${t.musicTitle}`} description={t.band.tagline} lang={lang}>
-  <!-- ===== Poster Hero ===== -->
-  <section class="band-hero" data-reveal>
-    <p class="band-eyebrow">{lang === 'zh' ? '独立乐队' : 'INDIE BAND'}</p>
-    <h1 class="band-name">{SITE.band.name}</h1>
-    <p class="band-name-en">{SITE.band.nameEn}</p>
+<BaseLayout title={`${SITE.band.nameEn} · ${t.musicTitle}`} description={t.band.tagline} lang={lang}>
+  <!-- ===== Hero ===== -->
+  <section class="band-hero">
+    <p class="eyebrow">{zh ? '独立乐队' : 'Indie band'}</p>
+    <h1 class="band-name">
+      {zh ? SITE.band.name : SITE.band.nameEn}
+    </h1>
+    <p class="band-name-alt">{zh ? SITE.band.nameEn : SITE.band.name}</p>
     <p class="band-role">
-      {lang === 'zh' ? `${SITE.authorZh} · ${SITE.band.roleZh}` : `${SITE.author} · ${SITE.band.roleEn}`}
+      <span>{zh ? SITE.authorZh : SITE.author}</span>
+      <span class="dot">·</span>
+      <span>{zh ? SITE.band.roleZh : SITE.band.roleEn}</span>
     </p>
-  </section>
-
-  <!-- ===== About ===== -->
-  <section class="band-sec" data-reveal style="--d:60ms">
-    <h2 class="band-h">{t.band.aboutBand}</h2>
-    <p class="band-about">{about}</p>
-  </section>
-
-  <!-- ===== Members ===== -->
-  <section class="band-sec" data-reveal style="--d:120ms">
-    <h2 class="band-h">{t.band.members}</h2>
-    <div class="members">
-      {members.map((m) => (
-        <div class:list={['member', { me: m.me }]}>
-          <span class="member-name">{m.name}</span>
-          <span class="member-role">{m.role}</span>
-        </div>
+    <div class="streams">
+      {streams.map((s) => (
+        <a class="stream" href={s.href} target="_blank" rel="noopener">{s.label} <span aria-hidden="true">↗</span></a>
       ))}
     </div>
   </section>
 
-  <!-- ===== Tracks ===== -->
-  {(audioTracks.length > 0 || embeds.length > 0) && (
-    <section class="band-sec" data-reveal>
-      <h2 class="band-h">{t.band.tracks}</h2>
+  <!-- ===== 01 About ===== -->
+  <section class="band-sec">
+    <div class="sec-head"><span class="sec-idx">01</span><h2 class="sec-title">{t.band.aboutBand}</h2></div>
+    <p class="band-about">{about}</p>
+  </section>
+
+  <!-- ===== 02 Listen ===== -->
+  {(embeds.length > 0 || audioTracks.length > 0) && (
+    <section class="band-sec">
+      <div class="sec-head"><span class="sec-idx">02</span><h2 class="sec-title">{t.band.tracks}</h2></div>
       {audioTracks.length > 0 && <div class="band-player"><AudioPlayer tracks={audioTracks} /></div>}
       {embeds.length > 0 && (
-        <div class="grid">
+        <div class="embed-grid">
           {embeds.map((i) => <MusicCard item={i} />)}
         </div>
       )}
     </section>
   )}
 
-  <!-- ===== Gigs ===== -->
+  <!-- ===== 03 Shows ===== -->
   {gigs.length > 0 && (
-    <section class="band-sec" data-reveal>
-      <h2 class="band-h">{t.band.gigs}</h2>
+    <section class="band-sec">
+      <div class="sec-head"><span class="sec-idx">03</span><h2 class="sec-title">{t.band.gigs}</h2></div>
       <div class="gigs">
         {gigs.map((g, idx) => (
           <GigCard title={g.data.title} date={g.data.date} venue={g.data.venue} city={g.data.city} poster={g.data.poster} note={g.data.note} index={idx} />
@@ -104,15 +86,15 @@ const about =
     </section>
   )}
 
-  <!-- ===== Notes ===== -->
+  <!-- ===== 04 Notes ===== -->
   {notes.length > 0 && (
-    <section class="band-sec" data-reveal>
-      <h2 class="band-h">{t.band.notes}</h2>
+    <section class="band-sec">
+      <div class="sec-head"><span class="sec-idx">{gigs.length > 0 ? '04' : '03'}</span><h2 class="sec-title">{t.band.notes}</h2></div>
       <div class="band-notes">
         {notes.map((n) => (
           <article class="band-note">
             <h3>{n.data.title}</h3>
-            <p>{n.data.note}</p>
+            {n.data.note && <p>{n.data.note}</p>}
           </article>
         ))}
       </div>
@@ -122,54 +104,42 @@ const about =
 
 <style>
   /* ===== Hero ===== */
-  .band-hero {
-    padding: clamp(3rem, 9vw, 6rem) 0 2rem;
-    border-bottom: 1px solid var(--hairline);
-    position: relative;
-  }
+  .band-hero { padding: clamp(3rem, 9vw, 6rem) 0 2.5rem; border-bottom: 1px solid var(--hairline); position: relative; }
   .band-hero::before {
-    content: '';
-    position: absolute; inset: 0;
+    content: ''; position: absolute; inset: 0; pointer-events: none;
     background: radial-gradient(55% 60% at 85% 20%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 70%);
-    pointer-events: none;
   }
-  .band-eyebrow { margin: 0 0 0.6em; font-size: var(--fs-tiny); letter-spacing: 0.28em; color: var(--accent-strong); font-weight: 600; }
-  .band-name {
-    margin: 0; font-size: clamp(3rem, 11vw, 6.5rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05;
+  .eyebrow { margin: 0 0 1.1rem; font-size: 0.72rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--accent-strong); font-weight: 600; }
+  .band-name { margin: 0; font-size: clamp(2.6rem, 9vw, 5.4rem); font-weight: 600; letter-spacing: -0.02em; line-height: 1.02; font-family: var(--font-serif); }
+  .band-name-alt { margin: 0.5rem 0 0; font-family: var(--font-serif); font-size: 1.2rem; color: var(--text-faint); letter-spacing: 0.04em; }
+  .band-role { display: flex; align-items: baseline; gap: 0.5rem; margin: 1.4rem 0 0; color: var(--text-muted); font-size: 0.95rem; }
+  .band-role .dot { color: var(--text-faint); }
+  .streams { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.8rem; }
+  .stream {
+    display: inline-flex; align-items: center; gap: 0.4em;
+    padding: 0.55em 1.05em; border: 1px solid var(--border); border-radius: var(--radius-sm);
+    font-size: 0.85rem; font-weight: 600; color: var(--text);
+    transition: background 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
   }
-  .band-name-en { margin: 0.4em 0 0; font-family: var(--font-serif); font-style: italic; font-size: 1.3rem; color: var(--text-muted); }
-  .band-role {
-    display: inline-block; margin: 1.2em 0 0; padding: 0.35em 1em;
-    background: var(--accent); color: #fff; border-radius: 999px;
-    font-weight: 600; font-size: var(--fs-small); letter-spacing: 0.04em;
-  }
+  .stream:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-strong); text-decoration: none; }
 
   /* ===== Sections ===== */
-  .band-sec { padding: var(--space-4) 0; border-bottom: 1px solid var(--hairline); }
+  .band-sec { padding: 2.4rem 0; border-bottom: 1px solid var(--hairline); }
   .band-sec:last-child { border-bottom: none; }
-  .band-h { font-size: var(--fs-h2); margin-bottom: 1.2rem; }
-  .band-about { font-size: var(--fs-lead); max-width: 62ch; margin: 0; }
+  .sec-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.4rem; }
+  .sec-idx { font-size: 0.8rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .sec-title { margin: 0; font-size: clamp(1.3rem, 2.2vw, 1.55rem); }
+  .band-about { font-size: var(--fs-lead); max-width: 62ch; margin: 0; color: var(--text-muted); }
 
-  /* ===== Members ===== */
-  .members { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
-  .member {
-    padding: 1.1rem; border: 1px solid var(--border); border-radius: var(--radius);
-    background: var(--bg-elevated); display: flex; flex-direction: column; gap: 0.2rem;
-  }
-  .member-name { font-weight: 600; font-size: 1.05rem; }
-  .member-role { font-size: var(--fs-small); color: var(--text-muted); }
-  .member.me { border-color: var(--accent); background: var(--accent-soft); box-shadow: var(--shadow); }
-  .member.me .member-role { color: var(--accent-strong); font-weight: 600; }
+  .band-player { margin-bottom: 1.5rem; max-width: 44rem; }
+  .embed-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.2rem; }
 
-  /* ===== Tracks / player ===== */
-  .band-player { margin-bottom: 1.5rem; max-width: 40rem; }
-
-  /* ===== Gigs ===== */
   .gigs { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.6rem; padding-top: 0.6rem; }
 
-  /* ===== Notes ===== */
-  .band-notes { display: grid; gap: 1rem; }
-  .band-note { padding: 1.1rem 1.2rem; border-left: 3px solid var(--accent); background: var(--bg-elevated); border-radius: 0 var(--radius) var(--radius) 0; }
+  .band-notes { display: grid; gap: 1rem; max-width: 70ch; }
+  .band-note { padding: 1.1rem 1.2rem; border-left: 2px solid var(--accent); background: var(--bg-elevated); border-radius: 0 var(--radius) var(--radius) 0; }
   .band-note h3 { margin: 0 0 0.3em; font-size: 1.1rem; }
   .band-note p { margin: 0; color: var(--text-muted); }
+
+  /* 摄影式沉浸不需要；这里保持亮/暗主题 */
 </style>
