@@ -15,19 +15,55 @@ const t = useTranslations(lang);
 const notes = (await getCollection('notes'))
   .filter((n) => n.id.startsWith(lang + '/') && !n.data.draft)
   .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const groups: [string, typeof notes][] = [];
+for (const n of notes) {
+  const year = String(n.data.pubDate.getFullYear());
+  const last = groups[groups.length - 1];
+  if (last && last[0] === year) last[1].push(n);
+  else groups.push([year, [n]]);
+}
 ---
 
 <PageLayout
   title={t.notesTitle}
   lang={lang}
-  intro={lang === 'zh' ? '科研与学习的进展记录。' : 'A running log of research and learning progress.'}
+  wide
+  intro={lang === 'zh'
+    ? '科研与学习的进展记录——论文笔记、实验复盘与阶段小结。'
+    : 'A running log of research and learning progress — paper notes, experiment write-ups, and milestones.'}
 >
-  <div class="grid">
-    {notes.map((n) => <NoteCard post={n} lang={lang} />)}
-  </div>
-  {notes.length === 0 && (
+  {notes.length > 0 ? (
+    <div class="notes">
+      {groups.map(([year, items]) => (
+        <section class="year-group">
+          <div class="year-rail"><span class="year">{year}</span></div>
+          <div class="year-items">
+            {items.map((n) => <NoteCard post={n} lang={lang} />)}
+          </div>
+        </section>
+      ))}
+    </div>
+  ) : (
     <p style="color:var(--text-muted)">
-      {lang === 'zh' ? '还没有日志——在后台 CMS 写第一篇吧。' : 'No notes yet — write your first one in the CMS.'}
+      {lang === 'zh' ? '还没有日志。' : 'No notes yet.'}
     </p>
   )}
 </PageLayout>
+
+<style>
+  .notes { margin-top: 0.5rem; }
+  .year-group {
+    display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 2.5rem;
+    padding: 1.4rem 0; border-top: 1px solid var(--hairline);
+  }
+  .year-rail { position: sticky; top: 5.2rem; align-self: start; }
+  .year {
+    font-family: var(--font-serif); font-size: 1.6rem; color: var(--text-faint);
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 700px) {
+    .year-group { grid-template-columns: 1fr; gap: 0.5rem; }
+    .year-rail { position: static; }
+  }
+</style>

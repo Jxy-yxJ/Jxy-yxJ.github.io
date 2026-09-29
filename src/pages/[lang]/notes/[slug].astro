@@ -1,22 +1,37 @@
 ---
 import PostLayout from '../../../layouts/PostLayout.astro';
 import { getCollection, render } from 'astro:content';
+import { getRelativeLocaleUrl } from 'astro:i18n';
 import type { Lang } from '../../../i18n/ui';
 
 export const getStaticPaths = async () => {
   const notes = await getCollection('notes');
+
   return notes.map((entry) => {
     const [locale, ...rest] = entry.id.split('/');
+    const lang = locale as Lang;
+    const list = notes
+      .filter((n) => n.id.startsWith(locale + '/'))
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    const i = list.findIndex((n) => n.id === entry.id);
+    const toLink = (n?: (typeof list)[number]) =>
+      n ? { title: n.data.title, href: getRelativeLocaleUrl(lang, `notes/${n.id.split('/').slice(1).join('/')}`) } : undefined;
+
     return {
       params: { lang: locale, slug: rest.join('/') },
-      props: { entry },
+      props: { entry, prev: toLink(list[i + 1]), next: toLink(list[i - 1]) },
     };
   });
 };
 
-const { entry } = Astro.props;
+const { entry, prev, next } = Astro.props;
 const lang = Astro.params.lang as Lang;
 const { Content } = await render(entry);
+
+const raw = entry.body ?? '';
+const cjk = (raw.match(/[\u4e00-\u9fff]/g) || []).length;
+const words = raw.replace(/[\u4e00-\u9fff]/g, ' ').split(/\s+/).filter(Boolean).length;
+const readingMinutes = Math.max(1, Math.round(cjk / 350 + words / 200));
 ---
 
 <PostLayout
@@ -26,6 +41,9 @@ const { Content } = await render(entry);
   updatedDate={entry.data.updatedDate}
   tags={entry.data.tags}
   description={entry.data.description}
+  readingMinutes={readingMinutes}
+  prev={prev}
+  next={next}
 >
   <Content />
 </PostLayout>

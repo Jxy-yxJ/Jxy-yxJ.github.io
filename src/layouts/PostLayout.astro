@@ -1,10 +1,12 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import { getRelativeLocaleUrl } from 'astro:i18n';
 import { useTranslations } from '../i18n/utils';
 import { SITE } from '../consts';
 import type { Lang } from '../i18n/ui';
 
+interface PostLink { title: string; href: string; }
 interface Props {
   title: string;
   lang: Lang;
@@ -12,42 +14,78 @@ interface Props {
   updatedDate?: Date;
   tags?: string[];
   description?: string;
+  readingMinutes?: number;
+  prev?: PostLink;
+  next?: PostLink;
 }
 
-const { title, lang, pubDate, updatedDate, tags = [], description } = Astro.props;
+const { title, lang, pubDate, updatedDate, tags = [], description, readingMinutes, prev, next } = Astro.props;
 const t = useTranslations(lang);
+const notesUrl = getRelativeLocaleUrl(lang, 'notes');
 ---
 
 <BaseLayout title={`${title} · ${SITE.author}`} description={description} lang={lang}>
   <article class="post">
+    <a class="back" href={notesUrl}>← {t.notesTitle}</a>
+
     <header class="post-head">
       <h1>{title}</h1>
       <p class="post-meta">
+        <span>{SITE.author}</span>
+        <span class="dot">·</span>
         <FormattedDate date={pubDate} lang={lang} />
-        {updatedDate && <> · {t.updated} <FormattedDate date={updatedDate} lang={lang} /></>}
+        {readingMinutes && <><span class="dot">·</span><span>{readingMinutes} {t.minRead}</span></>}
+        {updatedDate && <><span class="dot">·</span><span>{t.updated} <FormattedDate date={updatedDate} lang={lang} /></span></>}
       </p>
-      {tags.length > 0 && (
-        <p class="post-tags">
-          {tags.map((tag) => <span class="tag">#{tag}</span>)}
-        </p>
-      )}
     </header>
-    <div class="prose">
+
+    <div class="prose post-body">
       <slot />
     </div>
+
+    <footer class="post-foot">
+      {tags.length > 0 && (
+        <p class="post-tags">{tags.map((tag) => <span class="tag">#{tag}</span>)}</p>
+      )}
+      {(prev || next) && (
+        <nav class="post-nav" aria-label="More notes">
+          {prev ? (
+            <a class="nav-item prev" href={prev.href}>
+              <span class="nav-label">← {lang === 'zh' ? '上一篇' : 'Previous'}</span>
+              <span class="nav-title">{prev.title}</span>
+            </a>
+          ) : <span></span>}
+          {next && (
+            <a class="nav-item next" href={next.href}>
+              <span class="nav-label">{lang === 'zh' ? '下一篇' : 'Next'} →</span>
+              <span class="nav-title">{next.title}</span>
+            </a>
+          )}
+        </nav>
+      )}
+    </footer>
   </article>
 </BaseLayout>
 
 <style>
-  .post-head {
-    padding: 3rem 0 1.5rem;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 2rem;
-  }
+  .post { padding-top: 1.5rem; }
+  .back { display: inline-block; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2.5rem; }
+  .back:hover { color: var(--accent); text-decoration: none; }
+  .post-head { padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); margin-bottom: 2.2rem; }
+  .post-head h1 { font-size: clamp(1.9rem, 4vw, 2.8rem); max-width: 24ch; }
   .post-meta {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    margin: 0.4em 0;
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem;
+    color: var(--text-muted); font-size: 0.9rem; margin: 0.6em 0 0;
   }
-  .post-tags { margin-top: 0.6em; }
+  .post-meta .dot { color: var(--text-faint); }
+  .post-body { max-width: 68ch; }
+  .post-foot { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--hairline); }
+  .post-tags { margin: 0 0 1.5rem; }
+  .post-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .nav-item { display: flex; flex-direction: column; gap: 0.3rem; padding: 0.9rem 1rem; border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); }
+  .nav-item:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); text-decoration: none; }
+  .nav-item.next { text-align: right; }
+  .nav-label { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); }
+  .nav-title { font-family: var(--font-serif); font-size: 1rem; }
+  @media (max-width: 560px) { .post-nav { grid-template-columns: 1fr; } }
 </style>

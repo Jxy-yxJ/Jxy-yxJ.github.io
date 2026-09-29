@@ -3,34 +3,52 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 import FormattedDate from './FormattedDate.astro';
 import type { CollectionEntry } from 'astro:content';
 import type { Lang } from '../i18n/ui';
-import { useTranslations } from '../i18n/utils';
 
 interface Props {
   post: CollectionEntry<'notes'>;
   lang: Lang;
 }
 const { post, lang } = Astro.props;
-const t = useTranslations(lang);
 const slug = post.id.split('/').slice(1).join('/');
 const href = getRelativeLocaleUrl(lang, `notes/${slug}`);
 ---
 
-<article class="card note-card">
-  <p class="meta"><FormattedDate date={post.data.pubDate} lang={lang} /></p>
-  <h3><a href={href}>{post.data.title}</a></h3>
-  {post.data.description && <p class="desc">{post.data.description}</p>}
-  {post.data.tags.length > 0 && (
-    <p class="tags">{post.data.tags.map((tag) => <span class="tag">#{tag}</span>)}</p>
-  )}
-  <a class="more" href={href}>{t.readMore} →</a>
+<article class="note-row">
+  <a class="note-link" href={href}>
+    <span class="note-date"><FormattedDate date={post.data.pubDate} lang={lang} /></span>
+    <span class="note-main">
+      <span class="note-title">{post.data.title}</span>
+      {post.data.description && <span class="note-desc">{post.data.description}</span>}
+      {post.data.tags.length > 0 && (
+        <span class="note-tags">{post.data.tags.map((tag) => <span class="tag">#{tag}</span>)}</span>
+      )}
+    </span>
+    <span class="note-arrow" aria-hidden="true">→</span>
+  </a>
 </article>
 
 <style>
-  .note-card { display: flex; flex-direction: column; }
-  .note-card h3 { margin: 0.2em 0; }
-  .note-card h3 a { color: var(--text); }
-  .note-card h3 a:hover { color: var(--accent); text-decoration: none; }
-  .desc { color: var(--text-muted); font-size: 0.95rem; margin: 0.3em 0 0.8em; }
-  .tags { margin: 0 0 0.8em; }
-  .more { margin-top: auto; font-weight: 600; font-size: 0.92rem; }
+  .note-row { border-bottom: 1px solid var(--hairline); }
+  .note-link {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr) 1.4rem;
+    gap: 1.5rem;
+    align-items: baseline;
+    padding: 1.3rem 0;
+    color: var(--text);
+  }
+  .note-link:hover { text-decoration: none; }
+  .note-date { color: var(--text-faint); font-size: 0.85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .note-main { display: flex; flex-direction: column; gap: 0.35rem; }
+  .note-title { font-family: var(--font-serif); font-size: 1.2rem; transition: color 0.2s var(--ease); }
+  .note-link:hover .note-title { color: var(--accent-strong); }
+  .note-desc { color: var(--text-muted); font-size: 0.95rem; max-width: 70ch; }
+  .note-tags { display: inline-flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.15rem; }
+  .note-arrow { color: var(--accent); transition: transform 0.2s var(--ease); align-self: center; }
+  .note-link:hover .note-arrow { transform: translateX(3px); }
+
+  @media (max-width: 640px) {
+    .note-link { grid-template-columns: minmax(0, 1fr) 1.2rem; gap: 0.5rem 1rem; }
+    .note-date { grid-column: 1 / -1; }
+  }
 </style>
