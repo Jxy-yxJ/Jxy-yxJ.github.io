@@ -10,7 +10,6 @@ interface Props {
 const { lang, immersive = false } = Astro.props;
 const t = useTranslations(lang);
 
-// 导航项：key 对应 ui 文案，value 为相对当前语言的路径
 const items: { key: keyof typeof t.nav; path: string }[] = [
   { key: 'about', path: 'about' },
   { key: 'research', path: 'research' },
@@ -30,13 +29,14 @@ function isActive(path: string) {
 
 <nav class="site-nav" aria-label="Primary">
   <ul>
-    {items.map((item) => (
+    {items.map((item, i) => (
       <li>
         <a
           href={getRelativeLocaleUrl(lang, item.path)}
           aria-current={isActive(item.path) ? 'page' : undefined}
           class:list={[{ active: isActive(item.path) }]}
         >
+          <span class="nav-idx">{String(i + 1).padStart(2, '0')}</span>
           {t.nav[item.key]}
         </a>
       </li>
@@ -48,25 +48,58 @@ function isActive(path: string) {
   .site-nav ul {
     list-style: none;
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.2rem 1.1rem;
+    align-items: center;
+    gap: 0.15rem;
     margin: 0;
     padding: 0;
   }
   .site-nav a {
+    position: relative;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45em;
+    padding: 0.5em 0.7em;
+    border-radius: var(--radius-sm);
     color: var(--text-muted);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 500;
-    padding: 0.3em 0;
-    border-bottom: 2px solid transparent;
+    letter-spacing: 0.005em;
+    transition: color 0.2s var(--ease), background 0.2s var(--ease);
   }
-  .site-nav a:hover { color: var(--text); text-decoration: none; }
-  .site-nav a.active {
-    color: var(--accent-strong);
-    border-bottom-color: var(--accent);
+  .nav-idx {
+    font-family: var(--font-sans);
+    font-size: 0.62em;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-faint);
+    letter-spacing: 0.04em;
+    transition: color 0.2s var(--ease);
   }
-  /* 摄影页沉浸：导航文字更亮 */
-  :global(body.immersive) .site-nav a { color: rgba(236, 229, 219, 0.7); }
+  .site-nav a::after {
+    content: '';
+    position: absolute;
+    left: 0.7em; right: 0.7em; bottom: 0.28em;
+    height: 1.5px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.32s var(--ease);
+  }
+  .site-nav a:hover { color: var(--text); text-decoration: none; background: color-mix(in srgb, var(--text) 4%, transparent); }
+  .site-nav a:hover::after { transform: scaleX(1); }
+  .site-nav a:hover .nav-idx { color: var(--accent); }
+  .site-nav a.active { color: var(--text); }
+  .site-nav a.active::after { transform: scaleX(1); }
+  .site-nav a.active .nav-idx { color: var(--accent); }
+
+  @media (max-width: 880px) {
+    .site-nav ul { flex-direction: column; align-items: stretch; gap: 0; }
+    .site-nav a { display: flex; width: 100%; padding: 0.7em 0.4em; font-size: 0.98rem; border-radius: 0; border-bottom: 1px solid var(--hairline); }
+    .site-nav a::after { display: none; }
+    .site-nav a:hover { background: transparent; }
+  }
+
+  /* 摄影页沉浸 */
+  :global(body.immersive) .site-nav a { color: rgba(236, 236, 234, 0.72); }
   :global(body.immersive) .site-nav a:hover,
   :global(body.immersive) .site-nav a.active { color: #fff; }
 </style>

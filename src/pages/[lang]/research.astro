@@ -20,14 +20,21 @@ const items = (await getCollection('research'))
 <PageLayout
   title={t.researchTitle}
   lang={lang}
-  intro={lang === 'zh' ? '机器人、具身智能与机器学习相关的项目与产出。' : 'Projects & outputs across robotics, embodied AI, and machine learning.'}
+  wide
+  intro={lang === 'zh'
+    ? '机器人、具身智能与机器学习相关的项目与产出。数字均可追溯到仓库中的脚本与结果文件。'
+    : 'Projects and outputs across robotics, embodied AI, and machine learning. Every number is traceable to a script and a result file in the repository.'}
 >
-  <div class="grid">
-    {items.map((item) => <ResearchCard item={item} />)}
+  <div class="entries">
+    {items.map((item, i) => <ResearchCard item={item} index={i + 1} lang={lang} />)}
   </div>
   {items.length === 0 && (
     <p style="color:var(--text-muted)">
-      {lang === 'zh' ? '内容待补充——可在后台 CMS 添加。' : 'Content coming soon — add entries via the CMS.'}
+      {lang === 'zh' ? '内容待补充。' : 'Content coming soon.'}
     </p>
   )}
 </PageLayout>
+
+<style>
+  .entries { margin-top: 0.5rem; border-bottom: 1px solid var(--hairline); }
+</style>

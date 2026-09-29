@@ -14,18 +14,18 @@
    ============================================================ */
 :root {
   /* 亮色（默认） */
-  --bg: #fbf9f6;          /* 暖白，大量留白 */
+  --bg: #f7f7f5;          /* 冷调纸白 */
   --bg-elevated: #ffffff;
-  --bg-subtle: #f5f1ea;
-  --text: #211c17;
-  --text-muted: #6b6258;
-  --text-faint: #9a9085;
-  --border: #e7e0d6;
-  --hairline: #e9e2d7;
-  --accent: #c2683a;      /* ★ 橙/赭石 签名色 */
-  --accent-strong: #a8542c;
-  --accent-soft: #f3e3d8;
-  --accent-ink: #7c3d1d;
+  --bg-subtle: #eeeeea;
+  --text: #16181a;        /* 石墨黑 */
+  --text-muted: #5c6066;
+  --text-faint: #9a9da2;
+  --border: #e4e4e0;
+  --hairline: #ebebe7;
+  --accent: #9c5b34;      /* 低饱和铜 */
+  --accent-strong: #7e4726;
+  --accent-soft: #efe9e3;
+  --accent-ink: #5e3719;
 
   --font-serif: 'Fraunces Variable', 'Noto Serif SC', Georgia, serif;
   --font-sans: 'Inter', 'Noto Sans SC', system-ui, sans-serif;
@@ -58,25 +58,25 @@
 }
 
 [data-theme='dark'] {
-  --bg: #15120e;
-  --bg-elevated: #1f1b16;
-  --bg-subtle: #1a1611;
-  --text: #ece5db;
-  --text-muted: #a89e92;
-  --text-faint: #6e6559;
-  --border: #2c261f;
-  --hairline: #292019;
-  --accent: #d9824f;
-  --accent-strong: #e59a6a;
-  --accent-soft: #2e241b;
-  --accent-ink: #f0b78d;
+  --bg: #0f1012;
+  --bg-elevated: #17181b;
+  --bg-subtle: #131417;
+  --text: #ececea;
+  --text-muted: #a2a5a8;
+  --text-faint: #6b6e72;
+  --border: #24262a;
+  --hairline: #1e2023;
+  --accent: #c08552;
+  --accent-strong: #d29a6b;
+  --accent-soft: #221a13;
+  --accent-ink: #e6b892;
   --shadow: 0 1px 1px rgba(0, 0, 0, 0.3), 0 6px 16px rgba(0, 0, 0, 0.35);
   --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.45);
   color-scheme: dark;
 }
 
 /* 摄影页默认暗色沉浸 */
-body.immersive { background: #0e0c09; }
+body.immersive { background: #0b0c0e; }
 
 /* ============================================================
    基础
@@ -94,6 +94,7 @@ body {
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-x: clip;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
@@ -104,7 +105,7 @@ body::before {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.032;
+  opacity: 0.022;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
 }
 

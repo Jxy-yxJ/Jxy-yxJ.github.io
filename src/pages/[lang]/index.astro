@@ -37,17 +37,18 @@ const aboutLead =
   <!-- ============ HERO ============ -->
   <section class="hero">
     <div class="hero-text">
-      <h1 class="hero-name" data-hero style="--d:0ms">
-        {lang === 'zh' ? (
-          <><span class="name-main">{SITE.authorZh}</span> <span class="name-alt">{SITE.author}</span></>
-        ) : (
-          <><span class="name-main">{SITE.author}</span> <span class="name-alt">{SITE.authorZh}</span></>
-        )}
-      </h1>
-      <p class="hero-identity" data-hero style="--d:140ms">
-        {lang === 'zh' ? SITE.identityZh : SITE.identityEn}
+      <p class="hero-eyebrow" data-hero style="--d:0ms">
+        {lang === 'zh' ? SITE.roleZh : SITE.roleEn}
       </p>
-      <blockquote class="hero-epigraph" data-hero style="--d:320ms">
+      <h1 class="hero-name" data-hero style="--d:80ms">
+        <span class:list={['name-primary', { 'is-cjk': lang === 'zh' }]}>
+          {lang === 'zh' ? SITE.authorZh : SITE.author}
+        </span>
+      </h1>
+      <p class:list={['hero-name-alt', { 'is-cjk': lang !== 'zh' }]} data-hero style="--d:160ms">
+        {lang === 'zh' ? SITE.author : SITE.authorZh}
+      </p>
+      <blockquote class="hero-epigraph" data-hero style="--d:280ms">
         <em>“{SITE.epigraph}”</em>
         {lang === 'zh' && <cite>{SITE.epigraphZh}</cite>}
       </blockquote>
@@ -107,10 +108,16 @@ const aboutLead =
         {cover && <img src={cover.data.image} alt={cover.data.title} loading="lazy" />}
         <span class="beyond-label">{t.nav.photography}</span>
       </a>
-      <a class="beyond-card beyond-band" href={getRelativeLocaleUrl(lang, 'music')}>
-        <span class="beyond-band-name">{SITE.band.name}</span>
-        <span class="beyond-label">{t.nav.music} · {lang === 'zh' ? SITE.band.roleZh : SITE.band.roleEn}</span>
-      </a>
+      <div class="beyond-card beyond-band">
+        <a class="beyond-band-link" href={getRelativeLocaleUrl(lang, 'music')}>
+          <span class="beyond-band-name">{lang === 'zh' ? SITE.band.name : SITE.band.nameEn}</span>
+          <span class="beyond-label">{t.nav.music} · {lang === 'zh' ? SITE.band.roleZh : SITE.band.roleEn}</span>
+        </a>
+        <div class="band-streams">
+          <a href={SITE.band.netease} target="_blank" rel="noopener">NetEase</a>
+          <a href={SITE.band.spotify} target="_blank" rel="noopener">Spotify</a>
+        </div>
+      </div>
       {latestNote && (
         <a class="beyond-card" href={getRelativeLocaleUrl(lang, `notes/${latestNote.id.split('/').slice(1).join('/')}`)}>
           <span class="beyond-note-title">{latestNote.data.title}</span>
@@ -148,14 +155,23 @@ const aboutLead =
     -webkit-mask-image: radial-gradient(72% 62% at 50% 40%, #000 26%, transparent 76%);
     mask-image: radial-gradient(72% 62% at 50% 40%, #000 26%, transparent 76%);
   }
-  .hero-name { margin: 0 0 0.4em; font-size: var(--fs-hero); letter-spacing: -0.02em; }
-  .name-alt {
-    font-size: 0.42em; font-weight: 500; color: var(--text-faint);
-    font-family: var(--font-sans); letter-spacing: 0.02em; margin-left: 0.4em;
+  .hero-eyebrow {
+    margin: 0 0 1.1rem; font-size: 0.72rem; letter-spacing: 0.24em;
+    text-transform: uppercase; color: var(--accent-strong); font-weight: 600;
   }
-  .hero-identity {
-    margin: 0 0 1.2em; font-size: var(--fs-small); letter-spacing: 0.06em;
-    color: var(--text-muted); text-transform: uppercase;
+  .hero-name { margin: 0; font-size: var(--fs-hero); line-height: 1.0; letter-spacing: -0.022em; }
+  .hero-name .name-primary.is-cjk {
+    font-family: 'Noto Serif SC', var(--font-serif);
+    letter-spacing: 0.06em; font-weight: 500;
+  }
+  .hero-name-alt {
+    margin: 0.55rem 0 0; font-size: clamp(1.05rem, 2.1vw, 1.4rem);
+    color: var(--text-faint); font-family: var(--font-serif);
+    letter-spacing: 0.05em; font-weight: 400;
+  }
+  .hero-name-alt.is-cjk {
+    font-family: 'Noto Serif SC', var(--font-serif);
+    letter-spacing: 0.4em; font-size: clamp(0.95rem, 1.6vw, 1.15rem);
   }
   .hero-epigraph {
     margin: 0 0 1.6em; padding-left: 1rem;
@@ -212,7 +228,12 @@ const aboutLead =
   .beyond-card img ~ .beyond-label { position: relative; color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,0.6); }
   .beyond-card:has(img)::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 40%, rgba(0,0,0,0.55)); }
   .beyond-card .beyond-label { position: relative; font-weight: 600; font-size: var(--fs-small); z-index: 1; }
-  .beyond-band { justify-content: center; align-items: flex-start; gap: 0.3rem; background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+  .beyond-band { justify-content: space-between; align-items: stretch; gap: 0.3rem; background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 30%, transparent); }
+  .beyond-band-link { display: flex; flex-direction: column; gap: 0.25rem; color: inherit; }
+  .beyond-band-link:hover { text-decoration: none; }
   .beyond-band-name { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 600; color: var(--accent-ink); }
+  .band-streams { display: inline-flex; gap: 1rem; margin-top: 0.9rem; }
+  .band-streams a { font-size: 0.78rem; letter-spacing: 0.05em; color: var(--accent-ink); }
+  .band-streams a:hover { color: var(--accent-strong); text-decoration: none; }
   .beyond-note-title { font-weight: 600; margin-bottom: 0.3rem; }
 </style>

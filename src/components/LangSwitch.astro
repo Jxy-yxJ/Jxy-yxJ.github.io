@@ -22,12 +22,15 @@ const target = getRelativeLocaleUrl(other, pathWithoutLocale);
   .lang-switch {
     display: inline-flex;
     align-items: center;
+    height: 36px;
     font-weight: 600;
-    font-size: 0.9rem;
-    padding: 0.4em 0.8em;
-    border-radius: 999px;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    padding: 0 0.8em;
+    border-radius: var(--radius-sm);
     border: 1px solid var(--border);
     color: var(--text);
+    transition: background 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
   }
-  .lang-switch:hover { background: var(--accent-soft); border-color: var(--accent); text-decoration: none; }
+  .lang-switch:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-strong); text-decoration: none; }
 </style>

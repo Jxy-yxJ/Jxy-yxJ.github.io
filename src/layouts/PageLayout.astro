@@ -10,9 +10,10 @@ interface Props {
   description?: string;
   intro?: string;
   immersive?: boolean;
+  wide?: boolean;
 }
 
-const { title, lang, description, intro, immersive = false } = Astro.props;
+const { title, lang, description, intro, immersive = false, wide = false } = Astro.props;
 const t = useTranslations(lang);
 ---
 
@@ -21,7 +22,7 @@ const t = useTranslations(lang);
     <h1>{title}</h1>
     {intro && <p class="lead">{intro}</p>}
   </header>
-  <div class="prose">
+  <div class:list={['prose', { 'prose--wide': wide }]}>
     <slot />
   </div>
 </BaseLayout>
@@ -37,4 +38,5 @@ const t = useTranslations(lang);
     font-size: 1.15rem;
     max-width: 60ch;
   }
+  .prose--wide { max-width: none; }
 </style>

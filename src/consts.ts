@@ -1,27 +1,33 @@
-// 站点级常量 —— 改成你自己的信息即可
+// 站点级常量
 export const SITE = {
   // 展示姓名
   author: 'Xinyu Jiang',
   authorZh: '江鑫宇',
 
-  // 题记（替代原先的生硬 tagline，斜体展示）
+  // 角色（hero 眉标、SEO）
+  roleEn: 'Robotics & Embodied AI',
+  roleZh: '机器人与具身智能',
+
+  // 题记
   epigraph: 'Do not go gentle into that good night.',
   epigraphZh: '不要温和地走进那个良夜。',
 
-  // 身份副标题（hero 名字下方一行）
-  identityEn: 'Robotics & Embodied AI · Photographer · Drummer of 巧克力文件岛',
-  identityZh: '机器人与具身智能 · 摄影 · 巧克力文件岛乐队鼓手',
+  // 身份副标题（hero 下方一行）
+  identityEn: 'Robotics & Embodied AI · Photographer · Drummer of Chocland.doc',
+  identityZh: '机器人与具身智能 · 摄影 · 巧克力文件岛鼓手',
 
-  // 用于 about 页 description / SEO 的一句话
-  taglineEn: 'Robotics & Embodied AI researcher, photographer, and drummer.',
-  taglineZh: '机器人 / 具身智能研究者、摄影爱好者、乐队鼓手。',
+  // for about page description / SEO
+  taglineEn: 'Robotics & Embodied AI — perception, manipulation, and sim-to-real.',
+  taglineZh: '机器人 / 具身智能 —— 感知、操作与 sim-to-real。',
 
   // 乐队
   band: {
     name: '巧克力文件岛',
-    nameEn: 'Chocolate File Island',
+    nameEn: 'Chocland.doc',
     roleEn: 'Drums',
     roleZh: '鼓手',
+    netease: 'https://music.163.com/#/artist?id=50258552',
+    spotify: 'https://open.spotify.com/artist/77vR4tJSZ0eBNwmm5nTxLu',
   },
 
   // 邮箱（主邮箱用于 Footer / mailto 链接）
@@ -39,6 +45,7 @@ export const SITE = {
     linkedin: 'https://www.linkedin.com/in/xinyu-jiang-a00b17402',
     scholar: '',
     instagram: '',
-    spotify: '',
+    netease: 'https://music.163.com/#/artist?id=50258552',
+    spotify: 'https://open.spotify.com/artist/77vR4tJSZ0eBNwmm5nTxLu',
   },
 };

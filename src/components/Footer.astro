@@ -13,7 +13,7 @@ const links = [
   { label: 'LinkedIn', href: SITE.social.linkedin },
   { label: 'Scholar', href: SITE.social.scholar },
   { label: 'Email', href: `mailto:${SITE.email}` },
-];
+].filter((l) => l.href);
 ---
 
 <footer class="site-footer">
@@ -24,6 +24,11 @@ const links = [
         <li><a href={l.href} rel="me noopener" target="_blank">{l.label}</a></li>
       ))}
     </ul>
+    <p class="band-line">
+      <span class="band-name">{lang === 'zh' ? SITE.band.name : SITE.band.nameEn}</span>
+      <a href={SITE.band.netease} target="_blank" rel="noopener">NetEase</a>
+      <a href={SITE.band.spotify} target="_blank" rel="noopener">Spotify</a>
+    </p>
   </div>
 </footer>
 
@@ -45,4 +50,11 @@ const links = [
   }
   .social a { color: var(--text-muted); font-size: 0.9rem; }
   .social a:hover { color: var(--accent); }
+  .band-line {
+    display: inline-flex; align-items: center; gap: 0.7rem;
+    margin: 0; font-size: 0.85rem;
+  }
+  .band-name { color: var(--text-muted); font-style: italic; font-family: var(--font-serif); }
+  .band-line a { color: var(--text-faint); font-size: 0.8rem; letter-spacing: 0.04em; }
+  .band-line a:hover { color: var(--accent); }
 </style>
