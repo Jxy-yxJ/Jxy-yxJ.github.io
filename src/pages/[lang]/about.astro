@@ -1,6 +1,7 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
+import { getCollection } from 'astro:content';
 import { SITE } from '../../consts';
 import { useTranslations } from '../../i18n/utils';
 import type { Lang } from '../../i18n/ui';
@@ -11,89 +12,240 @@ export const getStaticPaths = () => [
 ];
 const { lang } = Astro.params as { lang: Lang };
 const t = useTranslations(lang);
+const zh = lang === 'zh';
+
+const education = (await getCollection('education'))
+  .filter((i) => i.id.startsWith(lang + '/'))
+  .sort((a, b) => a.data.order - b.data.order);
+const projects = (await getCollection('research'))
+  .filter((i) => i.id.startsWith(lang + '/'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+
+const focus = zh
+  ? [
+      ['机器人感知与操作', 'RGB-D、姿态/深度、运动规划'],
+      ['医疗机器人', '带安全约束的自主任务执行'],
+      ['具身智能体', '记忆、核验与评估'],
+      ['仿真到现实', '面向操作与移动机器人的迁移'],
+    ]
+  : [
+      ['Robotic perception & manipulation', 'RGB-D, pose/depth, motion planning'],
+      ['Medical robotics', 'autonomous task execution under safety constraints'],
+      ['Embodied agents', 'memory, verification, and evaluation'],
+      ['Sim-to-real', 'transfer for manipulation and mobile robots'],
+    ];
+
+const skillGroups = zh
+  ? [
+      ['编程', 'Python · Git / GitHub Actions · Linux'],
+      ['机器人与仿真', 'NVIDIA Isaac Sim · AI2-THOR · UR3 + Lula IK'],
+      ['感知与机器学习', 'RGB-D · MediaPipe · OpenCV · PyTorch · Transformers · NumPy'],
+      ['Web', 'Astro · TypeScript'],
+    ]
+  : [
+      ['Programming', 'Python · Git / GitHub Actions · Linux'],
+      ['Robotics & simulation', 'NVIDIA Isaac Sim · AI2-THOR · UR3 + Lula IK'],
+      ['Perception & ML', 'RGB-D · MediaPipe · OpenCV · PyTorch · Transformers · NumPy'],
+      ['Web', 'Astro · TypeScript'],
+    ];
+
+const lead = zh
+  ? '我是江鑫宇，一名本科生，方向是具身智能——让机器能够感知、推理并在真实世界中行动。我目前的工作是仿真中的医疗操作：从 RGB-D 感知患者、定位临床目标，并规划机器人能安全执行、带碰撞约束的运动。'
+  : 'I’m Xinyu Jiang, an undergraduate working toward embodied AI — teaching machines to perceive, reason, and act in the physical world. My current work is medical manipulation in simulation: perceiving a patient from RGB-D data, localizing a clinical target, and planning collision-aware motion a robot can execute safely.';
 ---
 
-<PageLayout
-  title={t.aboutTitle}
-  lang={lang}
-  description={lang === 'zh' ? SITE.taglineZh : SITE.taglineEn}
->
+<PageLayout title={t.aboutTitle} lang={lang} wide description={zh ? SITE.taglineZh : SITE.taglineEn}>
+  <div class="about-layout">
+    <aside class="about-aside">
+      <div class="aside-block">
+        <p class="k">{zh ? '所在地' : 'Based in'}</p>
+        <p class="v">{zh ? '中国 · 杭州' : 'Hangzhou, China'}</p>
+      </div>
+      <div class="aside-block">
+        <p class="k">{zh ? '方向' : 'Focus'}</p>
+        <p class="v">{zh ? '机器人感知与操作' : 'Robotic perception & manipulation'}</p>
+      </div>
+      <div class="aside-block">
+        <p class="k">{zh ? '在读' : 'Currently'}</p>
+        <p class="v">{zh ? '杭州电子科技大学 · 智能科学与技术（2023–2027）' : 'B.S. Intelligent Science & Technology, HDU (2023–2027)'}</p>
+      </div>
+      <div class="aside-block">
+        <p class="k">{zh ? '联系' : 'Contact'}</p>
+        <p class="v aside-links">
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          <a href={SITE.social.github} target="_blank" rel="noopener">GitHub</a>
+          <a href={SITE.social.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+          <a href={getRelativeLocaleUrl(lang, 'cv')}>CV</a>
+        </p>
+      </div>
+    </aside>
 
-  {lang === 'en' ? (
-    <>
-      <p>
-        I’m <strong>{SITE.author}</strong>, an undergraduate working toward
-        <strong> embodied AI</strong> — the intersection of <strong>robotics, computer vision,
-        and machine learning</strong> where machines perceive, reason, and act in the physical world.
-        My current work is medical manipulation in simulation: perceiving a patient from RGB-D data,
-        localizing a clinical target, and planning collision-aware motion that a robot can execute safely.
-      </p>
-      <h2>Research interests</h2>
-      <ul>
-        <li>Robotic perception and manipulation (RGB-D, pose/depth, motion planning)</li>
-        <li>Medical robotics and autonomous task execution</li>
-        <li>Embodied agents: memory, verification, and evaluation</li>
-        <li>Sim-to-real transfer for manipulation and mobile robots</li>
-      </ul>
-      <h2>Why this site</h2>
-      <p>
-        This site is my public notebook: research updates, learning progress, and the
-        photography &amp; music that keep me curious. It is also part of my portfolio
-        for graduate study and research positions.
-      </p>
-      <h2>Education &amp; background</h2>
-      <p>
-        B.S. in <strong>Intelligent Science and Technology</strong>, Hangzhou Dianzi University
-        (2023 – 2027). Focus on robotics, computer vision, machine learning, and optimization,
-        with applied work in robotic perception and manipulation in simulation.
-      </p>
-      <h2>Selected skills</h2>
-      <p>
-        <span class="tag">Python</span><span class="tag">PyTorch</span>
-        <span class="tag">NVIDIA Isaac Sim</span><span class="tag">AI2-THOR</span>
-        <span class="tag">UR3 / Lula IK</span><span class="tag">RGB-D</span>
-        <span class="tag">MediaPipe</span><span class="tag">OpenCV</span>
-        <span class="tag">Transformers</span><span class="tag">Git / CI</span>
-      </p>
-    </>
-  ) : (
-    <>
-      <p>
-        我是 <strong>{SITE.author}</strong>，一名本科生，方向是
-        <strong>具身智能（Embodied AI）</strong>——它站在
-        <strong>机器人、计算机视觉与机器学习</strong>的交叉点，让机器能够感知、推理并在真实世界中行动。
-        我目前的工作是仿真中的医疗操作：从 RGB-D 感知患者、定位临床目标，并规划机器人能安全执行、
-        带碰撞约束的运动。
-      </p>
-      <h2>研究兴趣</h2>
-      <ul>
-        <li>机器人感知与操作（RGB-D、姿态/深度、运动规划）</li>
-        <li>医疗机器人与自主任务执行</li>
-        <li>具身智能体：记忆、核验与评估</li>
-        <li>面向操作与移动机器人的仿真到现实迁移</li>
-      </ul>
-      <h2>为什么做这个站点</h2>
-      <p>
-        这个站点是我的公开笔记：科研进展、学习记录，以及让我保持好奇心的摄影与音乐。
-        它同时也是我申请研究生与科研岗位的作品集的一部分。
-      </p>
-      <h2>教育背景</h2>
-      <p>
-        杭州电子科技大学 <strong>智能科学与技术</strong> 本科（2023 – 2027）。
-        方向为机器人学、计算机视觉、机器学习与最优化，并在仿真中开展机器人感知与操作的实践。
-      </p>
-      <h2>主要技能</h2>
-      <p>
-        <span class="tag">Python</span><span class="tag">PyTorch</span>
-        <span class="tag">NVIDIA Isaac Sim</span><span class="tag">AI2-THOR</span>
-        <span class="tag">UR3 / Lula IK</span><span class="tag">RGB-D</span>
-        <span class="tag">MediaPipe</span><span class="tag">OpenCV</span>
-        <span class="tag">Transformers</span><span class="tag">Git / CI</span>
-      </p>
-    </>
-  )}
+    <div class="about-main">
+      <p class="about-lead">{lead}</p>
 
-  <p style="margin-top:2rem">
-    <a class="btn" href={getRelativeLocaleUrl(lang, 'research')}>{t.researchTitle} →</a>
-  </p>
+      <section class="sec">
+        <div class="sec-head"><span class="sec-idx">01</span><h2 class="sec-title">{zh ? '研究兴趣' : 'Focus'}</h2></div>
+        <ul class="focus-list">
+          {focus.map(([title, desc], i) => (
+            <li>
+              <span class="n">{String(i + 1).padStart(2, '0')}</span>
+              <span class="t">{title}<span class="d"> — {desc}</span></span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="sec">
+        <div class="sec-head"><span class="sec-idx">02</span><h2 class="sec-title">{t.sections.education}</h2></div>
+        {education.map((e) => (
+          <div class="edu">
+            <div class="edu-head">
+              <span class="edu-degree">{e.data.degree}</span>
+              <span class="edu-period">{e.data.period}</span>
+            </div>
+            <p class="edu-school">{e.data.school}</p>
+            {e.data.details.length > 0 && (
+              <ul class="edu-details">{e.data.details.map((d) => <li>{d}</li>)}</ul>
+            )}
+          </div>
+        ))}
+      </section>
+
+      <section class="sec">
+        <div class="sec-head"><span class="sec-idx">03</span><h2 class="sec-title">{zh ? '代表项目' : 'Selected work'}</h2></div>
+        <ul class="work-list">
+          {projects.map((p) => (
+            <li>
+              <a class="work" href={p.data.links.page ?? p.data.links.code}>
+                <span class="work-title">{p.data.title}</span>
+                {p.data.highlights[0] && <span class="work-metric">{p.data.highlights[0]}</span>}
+                <span class="work-arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a class="text-link" href={getRelativeLocaleUrl(lang, 'research')}>{t.viewAll} →</a>
+      </section>
+
+      <section class="sec">
+        <div class="sec-head"><span class="sec-idx">04</span><h2 class="sec-title">{zh ? '技能' : 'Skills'}</h2></div>
+        <dl class="skills">
+          {skillGroups.map(([label, items]) => (
+            <>
+              <dt>{label}</dt>
+              <dd>{items}</dd>
+            </>
+          ))}
+        </dl>
+      </section>
+
+      <section class="sec">
+        <div class="sec-head"><span class="sec-idx">05</span><h2 class="sec-title">{zh ? '工作之外' : 'Beyond work'}</h2></div>
+        <div class="beyond">
+          <a class="beyond-item" href={getRelativeLocaleUrl(lang, 'photography')}>
+            <span class="beyond-title">{t.nav.photography}</span>
+            <span class="beyond-desc">{zh ? '记录机器人将要进入的世界' : 'Documenting the world robots will act in'}</span>
+          </a>
+          <div class="beyond-item">
+            <span class="beyond-title">{zh ? SITE.band.name : SITE.band.nameEn}</span>
+            <span class="beyond-desc">{zh ? `独立乐队 · ${SITE.band.roleZh}` : `Indie band · ${SITE.band.roleEn}`}</span>
+            <span class="beyond-links">
+              <a href={SITE.band.netease} target="_blank" rel="noopener">NetEase</a>
+              <a href={SITE.band.spotify} target="_blank" rel="noopener">Spotify</a>
+            </span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
 </PageLayout>
+
+<style>
+  .about-layout {
+    display: grid;
+    grid-template-columns: 15.5rem minmax(0, 1fr);
+    gap: 4.5rem;
+    align-items: start;
+  }
+  .about-aside { position: sticky; top: 5.2rem; display: grid; gap: 1.5rem; }
+  .aside-block .k {
+    margin: 0 0 0.35rem; font-size: 0.7rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--text-faint);
+  }
+  .aside-block .v { margin: 0; font-size: 0.95rem; color: var(--text); line-height: 1.5; }
+  .aside-links { display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; }
+  .aside-links a { color: var(--text-muted); font-size: 0.9rem; }
+  .aside-links a:hover { color: var(--accent); }
+
+  .about-lead {
+    font-family: var(--font-serif);
+    font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+    line-height: 1.5; letter-spacing: -0.012em;
+    margin: 0 0 3rem; max-width: 46ch; color: var(--text);
+  }
+
+  .sec { padding: 2.3rem 0; border-top: 1px solid var(--hairline); }
+  .sec-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.3rem; }
+  .sec-idx { font-size: 0.8rem; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .sec-title { margin: 0; font-size: clamp(1.3rem, 2.2vw, 1.55rem); }
+
+  .focus-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.85rem; }
+  .focus-list li { display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: 1rem; align-items: baseline; }
+  .focus-list .n { color: var(--accent); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+  .focus-list .t { color: var(--text); }
+  .focus-list .d { color: var(--text-muted); }
+
+  .edu-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+  .edu-degree { font-weight: 600; }
+  .edu-period { color: var(--text-faint); font-size: 0.85rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .edu-school { margin: 0.2rem 0 0.7rem; color: var(--text-muted); }
+  .edu-details { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; }
+  .edu-details li { position: relative; padding-left: 1.1rem; color: var(--text-muted); font-size: 0.92rem; }
+  .edu-details li::before { content: '—'; position: absolute; left: 0; color: var(--accent); }
+
+  .work-list { list-style: none; margin: 0 0 1.2rem; padding: 0; }
+  .work {
+    display: grid; grid-template-columns: minmax(0, 1fr) 1.2rem;
+    grid-template-areas: 'title arrow' 'metric arrow';
+    gap: 0.3rem 1rem; align-items: start; padding: 1rem 0;
+    border-bottom: 1px solid var(--hairline); color: var(--text);
+  }
+  .work:hover { text-decoration: none; }
+  .work:hover .work-title { color: var(--accent-strong); }
+  .work:hover .work-arrow { transform: translateX(3px); }
+  .work-title { grid-area: title; font-family: var(--font-serif); font-size: 1.12rem; transition: color 0.2s var(--ease); }
+  .work-metric { grid-area: metric; color: var(--text-faint); font-size: 0.84rem; }
+  .work-arrow { grid-area: arrow; align-self: center; color: var(--accent); transition: transform 0.2s var(--ease); }
+  .text-link { font-weight: 600; font-size: 0.85rem; }
+
+  .skills { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 0.8rem 1.5rem; margin: 0; }
+  .skills dt { color: var(--text-faint); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .skills dd { margin: 0; color: var(--text-muted); }
+
+  .beyond { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .beyond-item {
+    display: flex; flex-direction: column; gap: 0.35rem;
+    padding: 1.2rem; border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--bg-elevated); color: var(--text);
+  }
+  a.beyond-item:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); text-decoration: none; }
+  .beyond-title { font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600; }
+  .beyond-desc { color: var(--text-muted); font-size: 0.9rem; }
+  .beyond-links { display: inline-flex; gap: 1rem; margin-top: 0.4rem; }
+  .beyond-links a { font-size: 0.8rem; letter-spacing: 0.04em; color: var(--accent-ink); }
+  .beyond-links a:hover { color: var(--accent-strong); }
+
+  @media (max-width: 900px) {
+    .about-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+    .about-aside { position: static; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem 1.5rem; }
+    .skills { grid-template-columns: 1fr; gap: 0.2rem 0; }
+    .skills dt { margin-top: 0.8rem; }
+    .beyond { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    .about-aside { grid-template-columns: 1fr; }
+    .work { grid-template-areas: 'title arrow'; }
+    .work-metric { display: none; }
+  }
+</style>
